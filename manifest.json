@@ -1,0 +1,22 @@
+{
+  "name": "VICO WorkFinder",
+  "short_name": "VICO",
+  "description": "Plataforma de búsqueda de empleo en Hong Kong - Creado por Jaime Andrés Dueñas Vicuña",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#00d4ff",
+  "orientation": "any",
+  "lang": "es",
+  "icons": [
+    {"src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {"title": "title", "text": "text", "url": "url"}
+  },
+  "categories": ["productivity", "business"],
+  "screenshots": []
+}

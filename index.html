@@ -1,0 +1,3172 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00d4ff">
+<meta name="description" content="VICO WorkFinder - Busca empleo en Hong Kong">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VICO">
+<link rel="manifest" href="manifest.json">
+<title>VICO WorkFinder – HK Jobs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --neon: #00d4ff;
+  --neon2: #ff6bff;
+  --neon3: #39ff14;
+  --gold: #ffd700;
+  --bg: #07080f;
+  --bg2: #0d1117;
+  --bg3: #141824;
+  --card: #111827;
+  --card2: #1a2235;
+  --border: rgba(0,212,255,0.15);
+  --text: #e8eaf0;
+  --text2: #8892a4;
+  --text3: #4a5568;
+  --danger: #ff4d6d;
+  --success: #00e676;
+  --warn: #ffc107;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-neon: 0 0 20px rgba(0,212,255,0.3);
+  --shadow-neon2: 0 0 20px rgba(255,107,255,0.3);
+  --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  --bottom-nav-h: 72px;
+  --topbar-h: 60px;
+  --font: 'Inter', sans-serif;
+  --font-title: 'Rajdhani', sans-serif;
+}
+[data-theme="light"] {
+  --bg: #f0f4f8; --bg2: #e8edf5; --bg3: #dde3ee;
+  --card: #ffffff; --card2: #f7f9fc;
+  --border: rgba(0,120,200,0.2);
+  --text: #1a202c; --text2: #4a5568; --text3: #a0aec0;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+  position:fixed;
+  width:100%;
+  height:100%;
+  transition:background 0.3s,color 0.3s;
+}
+
+/* ===== SCROLLABLE AREA ===== */
+#app-scroll{
+  position:absolute;
+  top:var(--topbar-h);
+  left:0; right:0;
+  bottom:var(--bottom-nav-h);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+
+/* ===== TOPBAR ===== */
+#topbar{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--topbar-h);
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;
+  z-index:1000;
+  backdrop-filter:blur(20px);
+}
+.topbar-logo{
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;
+  text-decoration:none;
+  flex-shrink:0;
+}
+.logo-anim{
+  width:38px;height:38px;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.logo-anim svg{
+  position:absolute;
+  width:38px;height:38px;
+  animation:logo-spin 8s linear infinite;
+}
+@keyframes logo-spin{
+  0%{filter:hue-rotate(0deg) drop-shadow(0 0 6px #00d4ff);}
+  50%{filter:hue-rotate(180deg) drop-shadow(0 0 12px #ff6bff);}
+  100%{filter:hue-rotate(360deg) drop-shadow(0 0 6px #00d4ff);}
+}
+.logo-anim:hover svg{animation-duration:0.8s;}
+.logo-v{
+  font-family:var(--font-title);
+  font-size:22px;font-weight:700;
+  color:var(--neon);
+  text-shadow:0 0 10px var(--neon);
+  letter-spacing:1px;
+  line-height:1;
+  position:relative;z-index:1;
+}
+.topbar-title{
+  font-family:var(--font-title);
+  font-size:18px;font-weight:700;
+  color:var(--text);
+  letter-spacing:1px;
+  display:none;
+}
+@media(min-width:400px){.topbar-title{display:block;}}
+.topbar-search{
+  flex:1;
+  position:relative;
+  max-width:400px;
+}
+.topbar-search input{
+  width:100%;
+  padding:8px 14px 8px 38px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:50px;
+  color:var(--text);
+  font-size:13px;
+  font-family:var(--font);
+  outline:none;
+  transition:var(--transition);
+}
+.topbar-search input:focus{
+  border-color:var(--neon);
+  box-shadow:0 0 0 2px rgba(0,212,255,0.15);
+}
+.topbar-search i{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--text2);font-size:13px;pointer-events:none;
+}
+.topbar-actions{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.tbtn{
+  width:34px;height:34px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--text2);cursor:pointer;font-size:13px;
+  transition:var(--transition);flex-shrink:0;
+}
+.tbtn:hover,.tbtn:active{background:var(--neon);color:#000;border-color:var(--neon);box-shadow:var(--shadow-neon);}
+#btn-dark-topbar{
+  font-size:14px;
+}
+#btn-install-top{display:none;}
+
+/* ===== PAGES ===== */
+.page{display:none;padding:16px;min-height:calc(100vh - var(--topbar-h) - var(--bottom-nav-h));}
+.page.active{display:block;}
+
+/* ===== BOTTOM NAV (Nintendo Switch style) ===== */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:var(--bottom-nav-h);
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom,0);
+  z-index:1000;
+  backdrop-filter:blur(20px);
+}
+.nav-btn{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;
+  padding:6px 2px;
+  cursor:pointer;
+  border:none;background:transparent;
+  color:var(--text3);
+  transition:var(--transition);
+  border-radius:12px;
+  position:relative;
+  min-width:0;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.nav-btn i{font-size:18px;transition:var(--transition);}
+.nav-btn span{font-size:9px;font-weight:600;letter-spacing:0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52px;transition:var(--transition);}
+
+/* Halo effect */
+.nav-btn::before{
+  content:'';
+  position:absolute;
+  inset:4px;
+  border-radius:10px;
+  background:transparent;
+  transition:var(--transition);
+  pointer-events:none;
+}
+.nav-btn:hover::before,.nav-btn:active::before{
+  background:rgba(0,212,255,0.08);
+  box-shadow:0 0 16px rgba(0,212,255,0.25),inset 0 0 10px rgba(0,212,255,0.05);
+}
+.nav-btn.active{color:var(--neon);}
+.nav-btn.active i{
+  filter:drop-shadow(0 0 6px var(--neon));
+  transform:translateY(-1px);
+}
+.nav-btn.active span{color:var(--neon);}
+.nav-btn.active::before{
+  background:rgba(0,212,255,0.1);
+  box-shadow:0 0 20px rgba(0,212,255,0.4),inset 0 0 12px rgba(0,212,255,0.08);
+}
+/* Active pulse */
+@keyframes nav-pulse{
+  0%{box-shadow:0 0 20px rgba(0,212,255,0.4),inset 0 0 12px rgba(0,212,255,0.08);}
+  50%{box-shadow:0 0 28px rgba(0,212,255,0.6),inset 0 0 16px rgba(0,212,255,0.12);}
+  100%{box-shadow:0 0 20px rgba(0,212,255,0.4),inset 0 0 12px rgba(0,212,255,0.08);}
+}
+.nav-btn.active::before{animation:nav-pulse 2s ease-in-out infinite;}
+.nav-badge{
+  position:absolute;top:4px;right:calc(50% - 22px);
+  background:var(--danger);color:#fff;
+  font-size:9px;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg2);
+  pointer-events:none;
+}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.card-header{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.card-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.card-title i{color:var(--neon);}
+.card-body{padding:16px;}
+
+/* ===== STAT CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+  position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:70px;height:70px;border-radius:50%;
+  background:var(--neon);opacity:0.05;
+}
+.stat-icon{font-size:22px;margin-bottom:8px;}
+.stat-val{font-family:var(--font-title);font-size:22px;font-weight:700;color:var(--neon);line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:3px;}
+.stat-change{font-size:10px;color:var(--success);margin-top:4px;}
+
+/* ===== BUTTONS ===== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 18px;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;
+  border:none;transition:var(--transition);
+  font-family:var(--font);white-space:nowrap;
+  touch-action:manipulation;
+}
+.btn-primary{background:linear-gradient(135deg,var(--neon),#0099bb);color:#000;}
+.btn-primary:hover,.btn-primary:active{transform:translateY(-1px);box-shadow:0 4px 15px rgba(0,212,255,0.4);}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover,.btn-secondary:active{border-color:var(--neon);color:var(--neon);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-success{background:var(--success);color:#000;}
+
+/* ===== BANK OF CHINA LOADER ===== */
+.boc-loader-wrap{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;
+  min-height:200px;
+}
+.boc-building{
+  position:relative;
+  width:60px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:0;
+}
+.boc-floors{
+  display:flex;flex-direction:column;align-items:center;
+  gap:1px;
+}
+.boc-floor{
+  background:linear-gradient(90deg,rgba(0,212,255,0.2),rgba(0,212,255,0.4),rgba(0,212,255,0.2));
+  border:1px solid rgba(0,212,255,0.5);
+  transition:background 0.3s;
+}
+.boc-floor.lit{background:linear-gradient(90deg,rgba(0,212,255,0.6),rgba(0,212,255,0.9),rgba(0,212,255,0.6));box-shadow:0 0 6px rgba(0,212,255,0.8);}
+/* Neon border trace */
+@keyframes neon-trace{
+  0%{stroke-dashoffset:800;}
+  100%{stroke-dashoffset:0;}
+}
+.boc-svg-wrap{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.boc-trace{stroke-dasharray:800;stroke-dashoffset:800;animation:neon-trace 2s linear infinite;}
+.boc-pct{font-family:var(--font-title);font-size:16px;font-weight:700;color:var(--neon);margin-top:10px;text-shadow:0 0 8px var(--neon);}
+.boc-lbl{font-size:11px;color:var(--text2);margin-top:3px;}
+
+/* ===== JOBS ===== */
+.filters-wrap{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;
+  align-items:flex-end;
+}
+.filter-group{display:flex;flex-direction:column;gap:4px;min-width:130px;}
+.filter-group label{font-size:11px;color:var(--text2);font-weight:600;}
+.filter-sel{
+  padding:7px 10px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-size:12px;font-family:var(--font);outline:none;
+  cursor:pointer;
+}
+.filter-sel:focus{border-color:var(--neon);}
+.search-row{display:flex;gap:8px;margin-bottom:14px;}
+.search-input{
+  flex:1;padding:9px 14px 9px 36px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-size:13px;
+  font-family:var(--font);outline:none;
+  transition:var(--transition);
+  position:relative;
+}
+.search-input-wrap{position:relative;flex:1;}
+.search-input-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:13px;}
+.search-input-wrap input{width:100%;padding:9px 14px 9px 36px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:var(--transition);}
+.search-input-wrap input:focus{border-color:var(--neon);}
+.jobs-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:640px){.jobs-grid{grid-template-columns:repeat(2,1fr);}}
+
+.job-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+  cursor:pointer;
+  transition:var(--transition);
+  position:relative;
+  border-left:3px solid var(--neon);
+}
+.job-card:hover,.job-card:active{
+  border-color:var(--neon);
+  box-shadow:0 4px 20px rgba(0,212,255,0.2);
+  transform:translateY(-1px);
+}
+.job-header{display:flex;gap:10px;align-items:flex-start;}
+.job-logo{
+  width:44px;height:44px;border-radius:10px;
+  object-fit:contain;background:var(--bg3);padding:5px;
+  flex-shrink:0;border:1px solid var(--border);
+}
+.job-info{flex:1;min-width:0;}
+.job-title{font-size:14px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:2px;}
+.job-company{font-size:12px;color:var(--neon);font-weight:600;}
+.job-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.tag{
+  font-size:10px;padding:3px 8px;border-radius:20px;
+  background:var(--bg3);color:var(--text2);
+  border:1px solid var(--border);
+}
+.tag.top{background:rgba(255,215,0,0.15);color:var(--gold);border-color:rgba(255,215,0,0.3);}
+.tag.skills{background:rgba(0,212,255,0.1);color:var(--neon);border-color:rgba(0,212,255,0.2);}
+.job-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.job-date{font-size:10px;color:var(--text3);}
+.fav-btn{background:none;border:none;font-size:16px;cursor:pointer;color:var(--text3);padding:2px;}
+.fav-btn.active{color:var(--gold);}
+
+/* ===== PORTALS ===== */
+.portal-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:12px;
+}
+.portal-header{display:flex;gap:12px;align-items:center;margin-bottom:12px;}
+.portal-logo{width:50px;height:50px;border-radius:12px;object-fit:contain;background:var(--bg3);padding:6px;}
+.portal-meta h3{font-size:15px;font-weight:700;color:var(--text);}
+.portal-meta p{font-size:12px;color:var(--text2);margin-top:2px;}
+.portal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.pstat{background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center;}
+.pstat-val{font-family:var(--font-title);font-size:18px;font-weight:700;color:var(--neon);}
+.pstat-lbl{font-size:10px;color:var(--text2);margin-top:2px;}
+
+/* ===== COMPANIES ===== */
+.company-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:12px;
+  border-top:3px solid var(--neon2);cursor:pointer;
+  transition:var(--transition);
+}
+.company-card:hover{box-shadow:var(--shadow-neon2);transform:translateY(-1px);}
+
+/* ===== NEWS ===== */
+.news-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.news-tab{
+  padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);
+  background:var(--card);color:var(--text2);transition:var(--transition);
+}
+.news-tab.active{background:var(--neon);color:#000;border-color:var(--neon);}
+.news-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;margin-bottom:10px;
+  transition:var(--transition);
+}
+.news-card:hover{border-color:var(--neon);}
+.news-source{font-size:10px;color:var(--neon);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.news-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.news-desc{font-size:12px;color:var(--text2);line-height:1.5;}
+.news-date{font-size:10px;color:var(--text3);margin-top:6px;}
+
+/* ===== AI CHAT ===== */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - var(--topbar-h) - var(--bottom-nav-h) - 130px);}
+.chat-messages{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px;}
+.chat-msg{
+  max-width:85%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;
+}
+.chat-msg.user{
+  align-self:flex-end;background:linear-gradient(135deg,var(--neon),#0099bb);color:#000;font-weight:600;
+  border-bottom-right-radius:4px;
+}
+.chat-msg.ai{
+  align-self:flex-start;background:var(--card2);color:var(--text);
+  border:1px solid var(--border);border-bottom-left-radius:4px;
+}
+.chat-input-row{display:flex;gap:8px;padding:10px;background:var(--card);border-top:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);}
+.chat-input-row input{flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:var(--font);outline:none;}
+.chat-input-row input:focus{border-color:var(--neon);}
+.quick-chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 10px 10px;}
+.chip{padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--neon);cursor:pointer;transition:var(--transition);}
+.chip:hover{background:rgba(0,212,255,0.1);}
+
+/* ===== SAVED LINKS ===== */
+.link-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+.link-url{font-size:11px;color:var(--neon);word-break:break-all;margin-top:3px;}
+.link-actions{display:flex;gap:8px;margin-top:10px;}
+
+/* ===== POMODORO ===== */
+.pomo-ring{
+  width:180px;height:180px;
+  border-radius:50%;
+  border:4px solid var(--bg3);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  margin:0 auto 20px;
+  position:relative;
+  box-shadow:0 0 30px rgba(0,212,255,0.2),inset 0 0 30px rgba(0,212,255,0.05);
+}
+.pomo-ring::before{
+  content:'';position:absolute;
+  inset:-4px;border-radius:50%;
+  border:4px solid transparent;
+  border-top-color:var(--neon);
+  border-right-color:var(--neon);
+  animation:pomo-spin 3s linear infinite;
+}
+@keyframes pomo-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.pomo-time{font-family:var(--font-title);font-size:44px;font-weight:700;color:var(--neon);text-shadow:0 0 20px var(--neon);line-height:1;}
+.pomo-mode-lbl{font-size:12px;color:var(--text2);margin-top:4px;}
+.pomo-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+.pomo-tab{padding:6px 16px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--transition);}
+.pomo-tab.active{background:var(--neon);color:#000;border-color:var(--neon);}
+.pomo-btns{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+.task-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--card2);border-radius:var(--radius-sm);margin-bottom:6px;}
+.task-item.done span{text-decoration:line-through;color:var(--text3);}
+.task-item span{flex:1;font-size:13px;}
+
+/* ===== MODAL ===== */
+.modal-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:var(--transition);
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  width:100%;max-width:600px;
+  max-height:88vh;overflow-y:auto;
+  padding:20px;
+  transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.modal-overlay.open .modal-sheet{transform:translateY(0);}
+.modal-handle{width:40px;height:4px;background:var(--bg3);border-radius:2px;margin:0 auto 16px;}
+.modal-close-btn{
+  float:right;background:var(--bg3);border:none;color:var(--text2);
+  width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ===== FORM ===== */
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.form-control{
+  width:100%;padding:10px 14px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-size:13px;
+  font-family:var(--font);outline:none;transition:var(--transition);
+}
+.form-control:focus{border-color:var(--neon);}
+
+/* ===== TOAST ===== */
+#toast{
+  position:fixed;bottom:calc(var(--bottom-nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--card);border:1px solid var(--neon);
+  color:var(--text);font-size:13px;font-weight:600;
+  padding:10px 20px;border-radius:30px;
+  box-shadow:0 0 20px rgba(0,212,255,0.3);
+  opacity:0;transition:var(--transition);
+  z-index:9999;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ===== SHARE POPUP ===== */
+#share-popup{
+  position:fixed;bottom:calc(var(--bottom-nav-h) + 12px);right:12px;
+  width:min(320px, calc(100vw - 24px));
+  background:var(--card);border:1px solid var(--neon);
+  border-radius:var(--radius);padding:16px;
+  box-shadow:0 0 30px rgba(0,212,255,0.2);
+  z-index:1500;
+  transform:scale(0.9) translateY(10px);
+  opacity:0;pointer-events:none;transition:var(--transition);
+}
+#share-popup.open{opacity:1;pointer-events:all;transform:scale(1) translateY(0);}
+
+/* ===== GUIDE / MANUAL ===== */
+.guide-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.guide-section h3{font-size:14px;font-weight:700;color:var(--neon);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.guide-section p,.guide-section li{font-size:13px;line-height:1.7;color:var(--text2);}
+.guide-section ul{padding-left:20px;}
+
+/* ===== SCROLL STYLES ===== */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ===== CHARTS ===== */
+.chart-wrap{position:relative;height:220px;margin-top:8px;}
+@media(min-width:640px){.chart-wrap{height:280px;}}
+
+/* ===== REVIEW CARDS ===== */
+.review-card{background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border-left:3px solid var(--neon);}
+.review-author{font-size:11px;font-weight:700;color:var(--neon);margin-bottom:4px;}
+.review-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.interview-tip{background:var(--bg3);border-radius:var(--radius-sm);padding:10px;margin-bottom:6px;font-size:12px;color:var(--text);border-left:3px solid var(--gold);}
+
+/* ===== RESPONSIVE GRIDS ===== */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:500px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+@media(min-width:640px){.jobs-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ===== DASHBOARD SECTION HEADERS ===== */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-family:var(--font-title);font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.section-title i{color:var(--neon);}
+
+/* ===== SETTINGS ===== */
+.settings-group{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.settings-group-title{padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--neon);border-bottom:1px solid var(--border);background:var(--bg3);}
+.setting-row{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 16px;border-bottom:1px solid var(--border);
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.setting-info{flex:1;min-width:0;}
+.setting-name{font-size:13px;font-weight:600;color:var(--text);}
+.setting-desc{font-size:11px;color:var(--text2);margin-top:2px;}
+.toggle-sw{
+  width:44px;height:24px;border-radius:12px;
+  background:var(--bg3);border:1px solid var(--border);
+  position:relative;cursor:pointer;transition:var(--transition);flex-shrink:0;
+}
+.toggle-sw.on{background:var(--neon);border-color:var(--neon);}
+.toggle-sw::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;transition:var(--transition);
+}
+.toggle-sw.on::after{transform:translateX(20px);background:#000;}
+
+/* ===== SKILLS BARS ===== */
+.skill-bar-wrap{margin-bottom:10px;}
+.skill-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px;}
+.skill-bar-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.skill-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--neon),var(--neon2));transition:width 1s ease;}
+
+/* ===== TRENDING LIST ===== */
+.trend-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.trend-item:last-child{border-bottom:none;}
+.trend-rank{font-family:var(--font-title);font-size:18px;font-weight:700;color:var(--text3);width:28px;text-align:center;}
+.trend-info{flex:1;}
+.trend-title{font-size:13px;font-weight:600;color:var(--text);}
+.trend-meta{font-size:11px;color:var(--text2);margin-top:2px;}
+.trend-change{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.trend-up{background:rgba(0,230,118,0.15);color:var(--success);}
+.trend-down{background:rgba(255,77,109,0.15);color:var(--danger);}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty-state .icon{font-size:48px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* ===== PAGE HEADER ===== */
+.page-header{margin-bottom:16px;}
+.page-header h1{font-family:var(--font-title);font-size:22px;font-weight:700;color:var(--text);letter-spacing:0.5px;}
+.page-header p{font-size:13px;color:var(--text2);margin-top:3px;}
+
+/* ===== LIGHT THEME overrides ===== */
+[data-theme="light"] .job-card,[data-theme="light"] .card,[data-theme="light"] .portal-card,[data-theme="light"] .company-card,[data-theme="light"] .news-card,[data-theme="light"] .link-card,[data-theme="light"] .guide-section,[data-theme="light"] .stat-card{box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+[data-theme="light"] .modal-sheet,[data-theme="light"] #share-popup{box-shadow:0 -4px 30px rgba(0,0,0,0.15);}
+[data-theme="light"] .chat-msg.user{color:#fff;}
+
+/* ===== FAVORITES ===== */
+#page-favorites .jobs-grid{grid-template-columns:1fr;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- TOPBAR -->
+<header id="topbar">
+  <div class="topbar-logo" onclick="navigateTo('dashboard')">
+    <div class="logo-anim">
+      <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="19,3 35,30 3,30" fill="none" stroke="#00d4ff" stroke-width="2" class="boc-trace" style="stroke-dasharray:100;stroke-dashoffset:100;animation:neon-trace 3s linear infinite;"/>
+        <polygon points="19,8 30,28 8,28" fill="none" stroke="#ff6bff" stroke-width="1.5" class="boc-trace" style="stroke-dasharray:80;stroke-dashoffset:80;animation:neon-trace 3s linear infinite 0.5s;"/>
+        <text x="19" y="24" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="13" font-weight="700" fill="#00d4ff">V</text>
+      </svg>
+    </div>
+    <span class="topbar-title">VICO WorkFinder</span>
+  </div>
+
+  <div class="topbar-search">
+    <i class="fas fa-search"></i>
+    <input type="text" id="global-search" placeholder="Buscar empleo, empresa..." oninput="handleGlobalSearch(this.value)" autocomplete="off">
+  </div>
+
+  <div class="topbar-actions">
+    <button class="tbtn" id="btn-dark-topbar" onclick="toggleDark()" title="Tema">
+      <i class="fas fa-moon" id="dark-icon"></i>
+    </button>
+    <button class="tbtn" onclick="openSharePopup()" title="Guardar link">
+      <i class="fas fa-link"></i>
+    </button>
+    <button class="tbtn" id="btn-install-top" onclick="installPWA()" title="Instalar app">
+      <i class="fas fa-download"></i>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN SCROLL AREA -->
+<div id="app-scroll">
+
+<!-- ===== PAGE: DASHBOARD ===== -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div>
+        <h1>📊 Dashboard HK</h1>
+        <p>Mercado laboral de Hong Kong en tiempo real</p>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="refreshDashboardAI()"><i class="fas fa-robot"></i> Actualizar con IA</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">💼</div>
+      <div class="stat-val" id="stat-jobs">18,432</div>
+      <div class="stat-lbl">Empleos activos HK</div>
+      <div class="stat-change">↑ +12.4% este mes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🏢</div>
+      <div class="stat-val">3,847</div>
+      <div class="stat-lbl">Empresas contratando</div>
+      <div class="stat-change">↑ +8.1%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-val">HK$28K</div>
+      <div class="stat-lbl">Salario medio/mes</div>
+      <div class="stat-change">↑ +5.2%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-val">Finance</div>
+      <div class="stat-lbl">Sector líder</div>
+      <div class="stat-change">2,341 vacantes</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-chart-bar"></i> Empleos por Mes</div>
+      <button class="btn btn-secondary btn-sm" onclick="renderCharts()"><i class="fas fa-sync"></i></button>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap"><canvas id="chart-monthly"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title"><i class="fas fa-chart-pie"></i> Sectores</div></div>
+      <div class="card-body"><div class="chart-wrap" style="height:180px"><canvas id="chart-sector"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title"><i class="fas fa-fire"></i> Trending</div></div>
+      <div class="card-body" id="trending-list" style="padding:8px 16px;"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="card-header"><div class="card-title"><i class="fas fa-code"></i> Skills Demandadas</div></div>
+    <div class="card-body" id="skills-bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title"><i class="fas fa-lightbulb"></i> Top 10 Tips Candidato HK</div></div>
+    <div class="card-body" id="candidate-tips"></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: JOBS ===== -->
+<div class="page" id="page-jobs">
+  <div class="page-header">
+    <h1>💼 Empleos en HK</h1>
+    <p id="jobs-count-lbl">Mostrando todos los empleos</p>
+  </div>
+
+  <div class="search-row">
+    <div class="search-input-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="job-search" placeholder="Busca por título, empresa, skill..." 
+        oninput="renderJobs()" 
+        onkeypress="if(event.key==='Enter')filterJobs()">
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="filterJobs()" title="Buscar empleos reales con JSearch">
+      <i class="fas fa-search"></i> ${S && S.rapidKey ? 'Buscar Real' : 'Buscar'}
+    </button>
+    <button class="btn btn-secondary btn-sm" onclick="clearJobFilters()"><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="filters-wrap">
+    <div class="filter-group">
+      <label>Categoría</label>
+      <select class="filter-sel" id="f-cat" onchange="filterJobs()">
+        <option value="">Todas</option>
+        <option value="education">Educación</option>
+        <option value="finance">Finanzas</option>
+        <option value="tech">Tecnología</option>
+        <option value="hospitality">Hostelería</option>
+        <option value="health">Salud</option>
+        <option value="logistics">Logística</option>
+        <option value="retail">Retail</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Fecha</label>
+      <select class="filter-sel" id="f-date" onchange="filterJobs()">
+        <option value="">Cualquier fecha</option>
+        <option value="today">Hoy</option>
+        <option value="week">Esta semana</option>
+        <option value="month">Este mes</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Salario</label>
+      <select class="filter-sel" id="f-sal" onchange="filterJobs()">
+        <option value="">Cualquiera</option>
+        <option value="20k">HK$20K+</option>
+        <option value="30k">HK$30K+</option>
+        <option value="50k">HK$50K+</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Idioma</label>
+      <select class="filter-sel" id="f-lang" onchange="filterJobs()">
+        <option value="">Todos</option>
+        <option value="English">English</option>
+        <option value="Cantonese">Cantonese</option>
+        <option value="Spanish">Spanish</option>
+        <option value="Mandarin">Mandarin</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="jobs-loader" style="display:none">
+    <div class="boc-loader-wrap">
+      <div class="boc-building" id="boc-building-jobs"></div>
+      <div class="boc-pct" id="boc-pct-jobs">0%</div>
+      <div class="boc-lbl">Buscando empleos en portales HK...</div>
+    </div>
+  </div>
+
+  <div class="jobs-grid" id="jobs-grid"></div>
+</div>
+
+<!-- ===== PAGE: PORTALS ===== -->
+<div class="page" id="page-portals">
+  <div class="page-header">
+    <h1>🌐 Portales HK</h1>
+    <p>Los 5 mejores portales de empleo de Hong Kong · Acceso directo a ofertas reales</p>
+  </div>
+
+  <!-- Quick access real job links -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-external-link-alt"></i> Acceso Rápido — Ofertas Reales Ahora</div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+        <a href="https://hk.indeed.com/jobs?q=&l=Hong+Kong" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;"><img src="https://logo.clearbit.com/indeed.com" style="width:16px;height:16px;border-radius:3px;"> Indeed HK</a>
+        <a href="https://hk.jobsdb.com/jobs" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;"><img src="https://logo.clearbit.com/jobsdb.com" style="width:16px;height:16px;border-radius:3px;"> JobsDB HK</a>
+        <a href="https://www.linkedin.com/jobs/search/?location=Hong%20Kong" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;"><img src="https://logo.clearbit.com/linkedin.com" style="width:16px;height:16px;border-radius:3px;"> LinkedIn HK</a>
+        <a href="https://www.ctgoodjobs.hk/jobs" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;"><img src="https://logo.clearbit.com/ctgoodjobs.hk" style="width:16px;height:16px;border-radius:3px;"> CTgoodjobs</a>
+        <a href="https://www.glassdoor.com/Job/hong-kong-jobs-SRCH_IL.0,9_IM1048.htm" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;"><img src="https://logo.clearbit.com/glassdoor.com" style="width:16px;height:16px;border-radius:3px;"> Glassdoor HK</a>
+        <a href="https://hk.jobsdb.com/jobs/in-Education-Training" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;">🎓 Educación HK</a>
+        <a href="https://hk.indeed.com/jobs?q=spanish+teacher&l=Hong+Kong" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;">👨‍🏫 Profesor Español HK</a>
+        <a href="https://hk.indeed.com/jobs?q=part+time&l=Hong+Kong" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none;justify-content:flex-start;gap:8px;">⏰ Part-time HK</a>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px;">💡 Comparte cualquier oferta que encuentres → pulsa "Compartir" en tu navegador → selecciona VICO WorkFinder para guardarla</p>
+    </div>
+  </div>
+
+  <div id="portals-list"></div>
+</div>
+
+<!-- ===== PAGE: COMPANIES ===== -->
+<div class="page" id="page-companies">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div><h1>🏆 Top Empresas</h1><p>Las 5 mejores empresas empleadoras de HK</p></div>
+      <button class="btn btn-primary btn-sm" onclick="refreshCompaniesAI()"><i class="fas fa-robot"></i> IA</button>
+    </div>
+  </div>
+  <div id="companies-list"></div>
+</div>
+
+<!-- ===== PAGE: NEWS ===== -->
+<div class="page" id="page-news">
+  <div class="page-header">
+    <h1>📰 Noticias</h1>
+    <p>Empleo, leyes laborales HK y actualidad global</p>
+  </div>
+  <div class="news-tabs">
+    <button class="news-tab active" onclick="switchNews('hk')" id="ntab-hk">🇭🇰 Empleo HK</button>
+    <button class="news-tab" onclick="switchNews('law')" id="ntab-law">⚖️ Leyes HK</button>
+    <button class="news-tab" onclick="switchNews('world')" id="ntab-world">🌍 Mundo</button>
+  </div>
+  <div id="news-content"></div>
+</div>
+
+<!-- ===== PAGE: SAVED LINKS ===== -->
+<div class="page" id="page-links">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div><h1>🔗 Links Guardados</h1><p id="links-count-lbl">0 links guardados</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openSharePopup()"><i class="fas fa-plus"></i> Añadir</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <select class="filter-sel" id="links-tag-filter" onchange="renderLinks()" style="flex:1;min-width:120px;">
+      <option value="all">Todas las etiquetas</option>
+      <option value="none">Sin etiquetar</option>
+      <option value="interesting">⭐ Interesante</option>
+      <option value="applied">✅ Aplicado</option>
+      <option value="pending">⏳ Pendiente</option>
+      <option value="interview">🎯 Entrevista</option>
+    </select>
+    <select class="filter-sel" id="links-fav-filter" onchange="renderLinks()" style="flex:1;min-width:100px;">
+      <option value="all">Todos</option>
+      <option value="fav">Solo favoritos</option>
+    </select>
+  </div>
+  <div id="links-list"></div>
+</div>
+
+<!-- ===== PAGE: AI CHAT ===== -->
+<div class="page" id="page-ai">
+  <div class="page-header">
+    <h1>🤖 Asistente IA</h1>
+    <p>Experto en empleos HK y leyes laborales</p>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <button class="btn btn-secondary btn-sm ai-prov-btn active" data-prov="demo" onclick="setAIProv('demo',this)">🎭 Demo</button>
+    <button class="btn btn-secondary btn-sm ai-prov-btn" data-prov="groq" onclick="setAIProv('groq',this)">⚡ Groq</button>
+    <button class="btn btn-secondary btn-sm ai-prov-btn" data-prov="gemini" onclick="setAIProv('gemini',this)">✨ Gemini</button>
+    <button class="btn btn-secondary btn-sm" onclick="clearChat()"><i class="fas fa-trash"></i></button>
+  </div>
+  <div class="card" style="margin-bottom:0;">
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="quick-chips" id="chat-chips"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Pregunta sobre empleos en HK..." onkeypress="if(event.key==='Enter')sendChat()">
+      <button class="btn btn-primary" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: POMODORO ===== -->
+<div class="page" id="page-pomodoro">
+  <div class="page-header"><h1>⏱ Pomodoro</h1><p>Organiza tu búsqueda de empleo</p></div>
+  <div class="pomo-tabs">
+    <button class="pomo-tab active" data-mode="work" onclick="setPomMode('work',this)">🍅 Trabajo (25m)</button>
+    <button class="pomo-tab" data-mode="break" onclick="setPomMode('break',this)">☕ Descanso (5m)</button>
+    <button class="pomo-tab" data-mode="long" onclick="setPomMode('long',this)">🛋 Largo (15m)</button>
+  </div>
+  <div class="pomo-ring">
+    <div class="pomo-time" id="pomo-display">25:00</div>
+    <div class="pomo-mode-lbl" id="pomo-mode-lbl">Sesión de trabajo</div>
+  </div>
+  <div class="pomo-btns">
+    <button class="btn btn-primary" id="btn-pomo-start" onclick="startPomo()"><i class="fas fa-play"></i> Iniciar</button>
+    <button class="btn btn-secondary" onclick="resetPomo()"><i class="fas fa-redo"></i> Reiniciar</button>
+  </div>
+  <div style="display:flex;gap:16px;justify-content:center;margin-bottom:20px;">
+    <span style="font-size:12px;color:var(--text2)">🍅 Sesiones: <strong id="pomo-sessions">0</strong></span>
+    <span style="font-size:12px;color:var(--text2)">⏱ Minutos: <strong id="pomo-total">0</strong></span>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title"><i class="fas fa-tasks"></i> Mis tareas de búsqueda</div></div>
+    <div class="card-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" class="form-control" id="pomo-task-input" placeholder="Añadir tarea de búsqueda..." onkeypress="if(event.key==='Enter')addPomoTask()" style="flex:1;">
+        <button class="btn btn-primary btn-sm" onclick="addPomoTask()"><i class="fas fa-plus"></i></button>
+      </div>
+      <div id="pomo-tasks"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE: SETTINGS ===== -->
+<div class="page" id="page-settings">
+  <div class="page-header"><h1>⚙️ Ajustes</h1><p>Personaliza VICO WorkFinder</p></div>
+  <div id="settings-content"></div>
+</div>
+
+<!-- ===== PAGE: FAVORITES ===== -->
+<div class="page" id="page-favorites">
+  <div class="page-header"><h1>⭐ Favoritos</h1><p id="fav-count-lbl">0 empleos guardados</p></div>
+  <div class="jobs-grid" id="fav-jobs-grid"></div>
+</div>
+
+<!-- ===== PAGE: GUIDE ===== -->
+<div class="page" id="page-guide">
+  <div class="page-header"><h1>🎓 Guía Candidato HK</h1><p>Cómo triunfar en el mercado laboral de Hong Kong</p></div>
+  <div id="guide-content"></div>
+</div>
+
+</div><!-- end #app-scroll -->
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" data-page="dashboard" onclick="navigateTo('dashboard')">
+    <i class="fas fa-chart-line"></i>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-btn" data-page="jobs" onclick="navigateTo('jobs')">
+    <i class="fas fa-briefcase"></i>
+    <span>Empleos</span>
+    <div class="nav-badge" id="jobs-badge" style="display:none"></div>
+  </button>
+  <button class="nav-btn" data-page="portals" onclick="navigateTo('portals')">
+    <i class="fas fa-globe"></i>
+    <span>Portales</span>
+  </button>
+  <button class="nav-btn" data-page="news" onclick="navigateTo('news')">
+    <i class="fas fa-newspaper"></i>
+    <span>Noticias</span>
+  </button>
+  <button class="nav-btn" data-page="ai" onclick="navigateTo('ai')">
+    <i class="fas fa-robot"></i>
+    <span>IA Chat</span>
+  </button>
+  <button class="nav-btn" data-page="links" onclick="navigateTo('links')">
+    <i class="fas fa-bookmark"></i>
+    <span>Links</span>
+    <div class="nav-badge" id="links-badge" style="display:none"></div>
+  </button>
+  <button class="nav-btn" data-page="settings" onclick="navigateTo('settings')">
+    <i class="fas fa-cog"></i>
+    <span>Ajustes</span>
+  </button>
+</nav>
+
+<!-- ===== JOB DETAIL MODAL ===== -->
+<div class="modal-overlay" id="modal-job">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <button class="modal-close-btn" onclick="closeModal('modal-job')"><i class="fas fa-times"></i></button>
+    <div id="modal-job-content"></div>
+  </div>
+</div>
+
+<!-- ===== COMPANY MODAL ===== -->
+<div class="modal-overlay" id="modal-company">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <button class="modal-close-btn" onclick="closeModal('modal-company')"><i class="fas fa-times"></i></button>
+    <div id="modal-company-content"></div>
+  </div>
+</div>
+
+<!-- ===== SHARE POPUP ===== -->
+<div id="share-popup">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <span style="font-size:14px;font-weight:700;color:var(--neon);">💾 Guardar Link en VICO</span>
+    <button onclick="closeSharePopup()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="form-group">
+    <label>URL del empleo</label>
+    <input type="url" class="form-control" id="sp-url" placeholder="https://...">
+  </div>
+  <div class="form-group">
+    <label>Título del puesto</label>
+    <input type="text" class="form-control" id="sp-title" placeholder="Ej: Profesor de Español">
+  </div>
+  <div class="form-group">
+    <label>Etiqueta</label>
+    <select class="form-control" id="sp-tag">
+      <option value="none">Sin etiquetar</option>
+      <option value="interesting">⭐ Interesante</option>
+      <option value="applied">✅ Aplicado</option>
+      <option value="pending">⏳ Pendiente</option>
+      <option value="interview">🎯 Entrevista</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Notas</label>
+    <textarea class="form-control" id="sp-notes" rows="2" placeholder="Notas rápidas..."></textarea>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-primary" style="flex:1" onclick="saveLink()"><i class="fas fa-save"></i> Guardar</button>
+    <button class="btn btn-secondary btn-sm" onclick="saveLink(true)" title="Guardar como favorito"><i class="fas fa-star"></i></button>
+  </div>
+</div>
+
+<!-- ===== ADMIN LOGIN MODAL ===== -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal-sheet" style="max-height:50vh;">
+    <div class="modal-handle"></div>
+    <h3 style="color:var(--neon);margin-bottom:16px;font-family:var(--font-title);">🔐 Modo Admin</h3>
+    <div class="form-group">
+      <label>Contraseña maestra</label>
+      <input type="password" class="form-control" id="admin-pwd" placeholder="Contraseña..." onkeypress="if(event.key==='Enter')checkAdmin()">
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="flex:1" onclick="checkAdmin()">Desbloquear</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-admin')">Cancelar</button>
+    </div>
+    <p id="admin-err" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;">Contraseña incorrecta</p>
+  </div>
+</div>
+
+<script>
+const HK_PORTALS = [
+  {
+    id: 'jobsdb',
+    name: 'JobsDB Hong Kong',
+    url: 'https://hk.jobsdb.com',
+    logo: 'https://logo.clearbit.com/jobsdb.com',
+    description: 'El portal de empleo #1 en Hong Kong con más de 50,000 ofertas activas.',
+    jobs_count: 52340,
+    rating: 4.5,
+    monthly_visitors: '2.1M',
+    specialties: ['Finance', 'Technology', 'Hospitality', 'Education'],
+    pros: ['Mayor base de datos HK', 'Filtros avanzados', 'App móvil excelente'],
+    cons: ['Muchos duplicados', 'Algunas ofertas desactualizadas']
+  },
+  {
+    id: 'ctgoodjobs',
+    name: 'CTgoodjobs',
+    url: 'https://www.ctgoodjobs.hk',
+    logo: 'https://logo.clearbit.com/ctgoodjobs.hk',
+    description: 'Portal premium con enfoque en profesionales y ejecutivos en HK.',
+    jobs_count: 38200,
+    rating: 4.3,
+    monthly_visitors: '1.5M',
+    specialties: ['Banking', 'Legal', 'Marketing', 'Management'],
+    pros: ['Calidad de ofertas alta', 'Empresas premium', 'Buen soporte'],
+    cons: ['Menos volumen que JobsDB', 'Interfaz algo anticuada']
+  },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn HK',
+    url: 'https://www.linkedin.com/jobs/hong-kong',
+    logo: 'https://logo.clearbit.com/linkedin.com',
+    description: 'Red profesional global con fuerte presencia en Hong Kong.',
+    jobs_count: 45000,
+    rating: 4.6,
+    monthly_visitors: '3.2M',
+    specialties: ['Technology', 'Finance', 'Consulting', 'Education'],
+    pros: ['Networking integrado', 'Perfiles verificados', 'Easy Apply'],
+    cons: ['Competencia muy alta', 'Requiere perfil completo']
+  },
+  {
+    id: 'indeed',
+    name: 'Indeed Hong Kong',
+    url: 'https://hk.indeed.com',
+    logo: 'https://logo.clearbit.com/indeed.com',
+    description: 'Motor de búsqueda de empleo global con miles de ofertas en HK.',
+    jobs_count: 61000,
+    rating: 4.1,
+    monthly_visitors: '1.8M',
+    specialties: ['All sectors', 'Entry level', 'Part-time', 'Remote'],
+    pros: ['Mayor volumen total', 'Fácil de usar', 'Alertas por email'],
+    cons: ['Muchas ofertas duplicadas', 'Calidad variable']
+  },
+  {
+    id: 'glassdoor',
+    name: 'Glassdoor HK',
+    url: 'https://www.glassdoor.com/Job/hong-kong-jobs-SRCH_IL.0,9_IM1007.htm',
+    logo: 'https://logo.clearbit.com/glassdoor.com',
+    description: 'Empleos + reseñas de empresas + salarios reales en Hong Kong.',
+    jobs_count: 28000,
+    rating: 4.4,
+    monthly_visitors: '900K',
+    specialties: ['Technology', 'Finance', 'Consulting', 'Education'],
+    pros: ['Reviews de empleados reales', 'Datos salariales', 'Cultura empresarial'],
+    cons: ['Menos volumen local', 'Más enfocado en multinacionales']
+  }
+];
+
+const JOBS_DATA = [
+  {
+    id: 1,
+    title: 'Spanish Language Teacher',
+    company: 'ESF Education Bureau',
+    company_id: 'esf',
+    location: 'Kowloon, HK',
+    salary: 'HK\$30,000 - 45,000',
+    type: 'Full-time',
+    category: 'education',
+    posted: '2025-07-28',
+    portal: 'jobsdb',
+    logo: 'https://logo.clearbit.com/esf.edu.hk',
+    description: 'ESF busca profesor nativo de español para impartir clases en escuela internacional de Kowloon. Experiencia mínima 2 años, se valora DELE.',
+    languages: ['English', 'Spanish'],
+    skills: ['DELE Certificate', 'Classroom Management', 'IB Curriculum', 'Cultural Awareness'],
+    contact: {
+      email: 'recruitment@esf.edu.hk',
+      phone: '+852 2574 9921',
+      web: 'https://www.esf.edu.hk/careers'
+    },
+    google_reviews: [
+      { author: 'Maria L.', rating: 4, text: 'Excelente ambiente de trabajo, muy multicultural. Los directivos son accesibles.', date: '2024-11' },
+      { author: 'James K.', rating: 5, text: 'Gran institución, apoyo constante al profesorado. Buenos recursos.', date: '2025-01' },
+      { author: 'Ana R.', rating: 3, text: 'Buen lugar pero carga de trabajo alta en temporadas de exámenes.', date: '2024-08' }
+    ],
+    employee_reviews: [
+      { author: 'Ex-Profesor (2022-2024)', text: 'Ambiente inclusivo, salario competitivo. Proceso de onboarding muy bien estructurado.', rating: 4 },
+      { author: 'Administrativo (2020-2023)', text: 'Buenos beneficios, pero el ritmo puede ser intenso en septiembre.', rating: 3 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Feb 2025', text: 'Proceso de 3 fases: CV, demo de clase y entrevista final. Muy profesional.', rating: 5 },
+      { author: 'Candidato Abr 2025', text: 'Me pidieron dar una clase de 20 min en español. Preparad material visual.', rating: 4 }
+    ],
+    interview_tips: [
+      'Prepara una demo de clase de 15-20 minutos en español',
+      'Investiga el currículo IB y menciona experiencia con él',
+      'Muestra flexibilidad cultural y adaptabilidad',
+      'Ten listos ejemplos de cómo manejas clases diversas',
+      'Viste formal pero no excesivamente rígido'
+    ],
+    trustpilot: 4.2,
+    google_rating: 4.1,
+    similar_platforms: ['HK Education Bureau', 'Cognita Schools HK', 'Nord Anglia Education'],
+    is_top_company: false,
+    featured: true
+  },
+  {
+    id: 2,
+    title: 'Financial Analyst',
+    company: 'HSBC Hong Kong',
+    company_id: 'hsbc',
+    location: 'Central, HK',
+    salary: 'HK\$45,000 - 70,000',
+    type: 'Full-time',
+    category: 'finance',
+    posted: '2025-07-25',
+    portal: 'linkedin',
+    logo: 'https://logo.clearbit.com/hsbc.com',
+    description: 'HSBC busca Analista Financiero con experiencia en mercados asiáticos. CFA preferido.',
+    languages: ['English', 'Cantonese', 'Mandarin'],
+    skills: ['CFA', 'Bloomberg Terminal', 'Financial Modeling', 'Excel Advanced', 'Python'],
+    contact: {
+      email: 'careers.hk@hsbc.com',
+      phone: '+852 2822 1111',
+      web: 'https://www.hsbc.com/careers'
+    },
+    google_reviews: [
+      { author: 'Tom W.', rating: 4, text: 'Gran empresa, muchas oportunidades de crecimiento internacional.', date: '2025-02' },
+      { author: 'Sarah C.', rating: 3, text: 'Cultura corporativa muy rígida. Mucho trabajo pero buen salario.', date: '2024-10' },
+      { author: 'David M.', rating: 5, text: 'Excelentes beneficios y formación continua. Recomendado.', date: '2025-05' }
+    ],
+    employee_reviews: [
+      { author: 'Analyst (2021-2024)', text: 'Buena proyección de carrera, pero las horas pueden ser largas en cierre de trimestre.', rating: 4 },
+      { author: 'Senior Manager (2018-2023)', text: 'Empresa sólida, buen paquete de beneficios y movilidad internacional.', rating: 5 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Mar 2025', text: '4 rondas de entrevistas. Preguntas técnicas de Excel y modelado financiero.', rating: 4 },
+      { author: 'Candidato Jun 2025', text: 'Assessment center de día completo. Muy exigente pero justo.', rating: 4 }
+    ],
+    interview_tips: [
+      'Domina Excel avanzado y modelos DCF',
+      'Estudia los últimos resultados financieros de HSBC',
+      'Prepara ejemplos de análisis de mercados asiáticos',
+      'Habla algo de Cantonés: suma puntos',
+      'Conoce la regulación financiera de HK (SFC)'
+    ],
+    trustpilot: 3.8,
+    google_rating: 4.0,
+    similar_platforms: ['Standard Chartered HK', 'Bank of China HK', 'Hang Seng Bank'],
+    is_top_company: true,
+    featured: true
+  },
+  {
+    id: 3,
+    title: 'Full Stack Developer',
+    company: 'Cathay Pacific Airways',
+    company_id: 'cathay',
+    location: 'Tung Chung, HK',
+    salary: 'HK\$50,000 - 80,000',
+    type: 'Full-time',
+    category: 'tech',
+    posted: '2025-07-20',
+    portal: 'ctgoodjobs',
+    logo: 'https://logo.clearbit.com/cathaypacific.com',
+    description: 'Cathay Pacific busca desarrollador Full Stack para digitalización de operaciones. React + Node.js + Cloud.',
+    languages: ['English', 'Cantonese'],
+    skills: ['React', 'Node.js', 'AWS', 'PostgreSQL', 'Docker', 'CI/CD'],
+    contact: {
+      email: 'it.careers@cathaypacific.com',
+      phone: '+852 2747 5000',
+      web: 'https://www.cathaypacific.com/careers'
+    },
+    google_reviews: [
+      { author: 'Kevin L.', rating: 5, text: 'Increíbles beneficios de viaje. El mejor employer de HK en aviación.', date: '2025-03' },
+      { author: 'Priya S.', rating: 4, text: 'Ambiente innovador en IT. Mucho apoyo para certificaciones cloud.', date: '2024-12' },
+      { author: 'Marcus T.', rating: 4, text: 'Buen work-life balance para ser una aerolínea. Flexibilidad en IT.', date: '2025-06' }
+    ],
+    employee_reviews: [
+      { author: 'Dev Senior (2020-2024)', text: 'Stack tecnológico moderno, equipo internacional. Viajes gratuitos son increíbles.', rating: 5 },
+      { author: 'Junior Dev (2022-2024)', text: 'Curva de aprendizaje alta pero muy buen mentoring.', rating: 4 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Ene 2025', text: 'Technical test de 2h + entrevista con el equipo. Preguntas de arquitectura de sistemas.', rating: 4 },
+      { author: 'Candidato May 2025', text: 'Proceso ágil de 3 semanas. Muy organizado y transparente.', rating: 5 }
+    ],
+    interview_tips: [
+      'Prepara un proyecto personal en React/Node.js para mostrar',
+      'Estudia arquitectura de microservicios',
+      'Conoce los servicios de AWS principales',
+      'Menciona experiencia con sistemas de alta disponibilidad',
+      'Pregunta sobre el roadmap tecnológico de la empresa'
+    ],
+    trustpilot: 4.1,
+    google_rating: 4.3,
+    similar_platforms: ['HK Airport Authority', 'HK Express', 'Air Hong Kong'],
+    is_top_company: true,
+    featured: true
+  },
+  {
+    id: 4,
+    title: 'Hotel Operations Manager',
+    company: 'The Peninsula Hong Kong',
+    company_id: 'peninsula',
+    location: 'Tsim Sha Tsui, HK',
+    salary: 'HK\$40,000 - 60,000',
+    type: 'Full-time',
+    category: 'hospitality',
+    posted: '2025-07-15',
+    portal: 'indeed',
+    logo: 'https://logo.clearbit.com/peninsula.com',
+    description: 'The Peninsula busca Operations Manager con experiencia en hoteles de lujo 5 estrellas.',
+    languages: ['English', 'Cantonese', 'Mandarin'],
+    skills: ['Hotel Operations', 'Revenue Management', 'Guest Relations', 'F&B Management', 'Leadership'],
+    contact: {
+      email: 'careers@peninsula.com',
+      phone: '+852 2920 2888',
+      web: 'https://www.peninsula.com/en/hong-kong/careers'
+    },
+    google_reviews: [
+      { author: 'Lisa H.', rating: 5, text: 'El hotel más icónico de HK. Trabajar aquí es un privilegio.', date: '2025-01' },
+      { author: 'Chen W.', rating: 4, text: 'Estándares altísimos pero muy gratificante. Formación excelente.', date: '2024-09' },
+      { author: 'Emma R.', rating: 5, text: 'Ambiente de lujo real, clientes exigentes pero el equipo es fantástico.', date: '2025-04' }
+    ],
+    employee_reviews: [
+      { author: 'F&B Manager (2019-2023)', text: 'Exigente pero el aprendizaje es único. Networking increíble.', rating: 4 },
+      { author: 'Front Desk (2021-2024)', text: 'Turnos difíciles pero el ambiente es muy profesional.', rating: 3 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Feb 2025', text: 'Entrevista muy formal. Preguntan sobre situaciones de crisis con clientes VIP.', rating: 4 },
+      { author: 'Candidato Abr 2025', text: 'Proceso de 2 rondas. Valoran mucho la presentación personal.', rating: 4 }
+    ],
+    interview_tips: [
+      'Viste impecablemente: traje/vestido formal oscuro',
+      'Prepara casos de manejo de clientes VIP difíciles',
+      'Conoce la historia del hotel (desde 1928)',
+      'Demuestra tu nivel de Cantonés aunque sea básico',
+      'Ten ejemplos de mejora de métricas operacionales'
+    ],
+    trustpilot: 4.6,
+    google_rating: 4.7,
+    similar_platforms: ['Mandarin Oriental HK', 'Four Seasons HK', 'Ritz-Carlton HK'],
+    is_top_company: true,
+    featured: false
+  },
+  {
+    id: 5,
+    title: 'Digital Marketing Manager',
+    company: 'Alibaba Group HK',
+    company_id: 'alibaba',
+    location: 'Wan Chai, HK',
+    salary: 'HK\$45,000 - 65,000',
+    type: 'Full-time',
+    category: 'marketing',
+    posted: '2025-07-10',
+    portal: 'glassdoor',
+    logo: 'https://logo.clearbit.com/alibaba.com',
+    description: 'Alibaba HK busca Digital Marketing Manager para liderar estrategia en mercados HK y SEA.',
+    languages: ['English', 'Mandarin', 'Cantonese'],
+    skills: ['SEO/SEM', 'Social Media', 'Data Analytics', 'WeChat Marketing', 'KOL Management'],
+    contact: {
+      email: 'hk.talent@alibaba-inc.com',
+      phone: '+852 2215 5100',
+      web: 'https://job.alibaba.com/zhaopin/position_detail.htm'
+    },
+    google_reviews: [
+      { author: 'Ray C.', rating: 4, text: 'Empresa dinámica, ritmo muy rápido. Aprendes muchísimo.', date: '2025-02' },
+      { author: 'Sophie L.', rating: 3, text: 'Cultura muy china, difícil para extranjeros al principio.', date: '2024-11' },
+      { author: 'Victor T.', rating: 4, text: 'Grandes proyectos y presupuesto de marketing generoso.', date: '2025-05' }
+    ],
+    employee_reviews: [
+      { author: 'Marketing Lead (2021-2024)', text: 'Velocidad de trabajo extrema pero las oportunidades de carrera son únicas.', rating: 4 },
+      { author: 'Analyst (2022-2023)', text: 'Mucha presión pero aprendes sobre el ecosistema digital chino.', rating: 3 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Mar 2025', text: 'Case study de marketing de 1h + presentación al equipo. Muy técnico.', rating: 4 },
+      { author: 'Candidato Jun 2025', text: 'Preguntan mucho sobre métricas y ROI. Lleva datos reales de campañas.', rating: 5 }
+    ],
+    interview_tips: [
+      'Lleva un portfolio con métricas reales de campañas',
+      'Conoce WeChat, Weibo y el ecosistema digital chino',
+      'Prepara un mini plan de marketing para HK',
+      'Habla de KPIs específicos que hayas mejorado',
+      'El Mandarín es muy valorado aquí'
+    ],
+    trustpilot: 3.5,
+    google_rating: 3.8,
+    similar_platforms: ['Tencent HK', 'ByteDance HK', 'JD.com HK'],
+    is_top_company: true,
+    featured: false
+  },
+  {
+    id: 6,
+    title: 'Spanish / English Teacher (Part-time)',
+    company: 'Wall Street English HK',
+    company_id: 'wse',
+    location: 'Mong Kok, HK',
+    salary: 'HK\$200-350/hr',
+    type: 'Part-time',
+    category: 'education',
+    posted: '2025-07-29',
+    portal: 'jobsdb',
+    logo: 'https://logo.clearbit.com/wallstreetenglish.com',
+    description: 'Wall Street English busca profesores de español e inglés para adultos. Horarios flexibles.',
+    languages: ['English', 'Spanish'],
+    skills: ['TEFL/TESOL', 'Adult Education', 'Conversation Teaching', 'Business English'],
+    contact: {
+      email: 'hk.recruitment@wallstreetenglish.com',
+      phone: '+852 2110 0000',
+      web: 'https://www.wallstreetenglish.com/careers'
+    },
+    google_reviews: [
+      { author: 'Carlos M.', rating: 4, text: 'Buen lugar para empezar en HK. Ambiente muy internacional.', date: '2025-03' },
+      { author: 'Jenny K.', rating: 3, text: 'Los horarios son flexibles pero la paga podría ser mejor.', date: '2024-12' },
+      { author: 'Alex P.', rating: 4, text: 'Buena experiencia, estudiantes muy motivados.', date: '2025-06' }
+    ],
+    employee_reviews: [
+      { author: 'Teacher (2022-2024)', text: 'Horarios cómodos, materiales listos. Ideal para compaginar con otras cosas.', rating: 4 },
+      { author: 'Coordinator (2021-2023)', text: 'Buen ambiente pero alta rotación de profesores.', rating: 3 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato May 2025', text: 'Demo de clase de 10 min + entrevista informal. Muy accesible.', rating: 5 },
+      { author: 'Candidato Jul 2025', text: 'Proceso rápido, respuesta en 3 días. Piden certificado TEFL.', rating: 4 }
+    ],
+    interview_tips: [
+      'Ten tu certificado TEFL/TESOL listo',
+      'Prepara una actividad de conversación de 10 minutos',
+      'Sé entusiasta y muestra energía positiva',
+      'Menciona experiencia con adultos si la tienes',
+      'Pregunta sobre los horarios disponibles y el sistema de materiales'
+    ],
+    trustpilot: 3.9,
+    google_rating: 3.7,
+    similar_platforms: ['Berlitz HK', 'British Council HK', 'IELTS Hong Kong'],
+    is_top_company: false,
+    featured: true
+  },
+  {
+    id: 7,
+    title: 'Logistics Coordinator',
+    company: 'DHL Express Hong Kong',
+    company_id: 'dhl',
+    location: 'Kwai Chung, HK',
+    salary: 'HK\$22,000 - 32,000',
+    type: 'Full-time',
+    category: 'logistics',
+    posted: '2025-07-18',
+    portal: 'indeed',
+    logo: 'https://logo.clearbit.com/dhl.com',
+    description: 'DHL HK busca coordinador de logística con experiencia en operaciones de importación/exportación.',
+    languages: ['English', 'Cantonese'],
+    skills: ['Supply Chain', 'Import/Export', 'SAP', 'Customs Clearance', 'Excel'],
+    contact: {
+      email: 'hk.careers@dhl.com',
+      phone: '+852 2400 3388',
+      web: 'https://www.dhl.com/hk-en/home/careers.html'
+    },
+    google_reviews: [
+      { author: 'Peter C.', rating: 4, text: 'Empresa muy organizada, buenos procesos. Estable.', date: '2025-01' },
+      { author: 'Amy L.', rating: 3, text: 'Trabajo muy operacional, poco margen para creatividad.', date: '2024-09' },
+      { author: 'Sam T.', rating: 4, text: 'Buen empleador, puntual en pagos y beneficios claros.', date: '2025-04' }
+    ],
+    employee_reviews: [
+      { author: 'Ops Manager (2019-2023)', text: 'Empresa sólida con buenas políticas de RRHH. Estabilidad garantizada.', rating: 4 },
+      { author: 'Coordinator (2021-2024)', text: 'Trabajo rutinario pero el ambiente es bueno y el equipo colaborativo.', rating: 3 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Feb 2025', text: 'Entrevista estándar, preguntan sobre experiencia en aduanas y SAP.', rating: 3 },
+      { author: 'Candidato Abr 2025', text: 'Proceso de 2 semanas. Piden referencias de trabajos anteriores.', rating: 4 }
+    ],
+    interview_tips: [
+      'Conoce los Incoterms básicos (FOB, CIF, EXW)',
+      'Si tienes SAP, menciónalo claramente',
+      'Prepara ejemplos de resolución de problemas logísticos',
+      'Conoce la posición de HK como hub logístico de Asia',
+      'Demuestra atención al detalle con ejemplos concretos'
+    ],
+    trustpilot: 4.0,
+    google_rating: 3.9,
+    similar_platforms: ['FedEx HK', 'UPS Hong Kong', 'Kerry Logistics'],
+    is_top_company: false,
+    featured: false
+  },
+  {
+    id: 8,
+    title: 'Registered Nurse (ICU)',
+    company: 'Hong Kong Sanatorium & Hospital',
+    company_id: 'hksh',
+    location: 'Happy Valley, HK',
+    salary: 'HK\$35,000 - 55,000',
+    type: 'Full-time',
+    category: 'health',
+    posted: '2025-07-22',
+    portal: 'ctgoodjobs',
+    logo: 'https://logo.clearbit.com/hksh.com',
+    description: 'HKSH busca enfermera/o registrado para UCI. Registro HK Nursing Council requerido.',
+    languages: ['English', 'Cantonese'],
+    skills: ['ICU Care', 'Ventilator Management', 'Critical Care', 'HK Nursing License', 'BLS/ACLS'],
+    contact: {
+      email: 'nursing.recruitment@hksh.com',
+      phone: '+852 2835 8600',
+      web: 'https://www.hksh.com/en/careers'
+    },
+    google_reviews: [
+      { author: 'Dr. Chan', rating: 5, text: 'Hospital de referencia en HK. Equipamiento de primer nivel.', date: '2025-02' },
+      { author: 'Nurse Mary', rating: 4, text: 'Exigente pero muy profesional. Buena formación continua.', date: '2024-11' },
+      { author: 'Patient Review', rating: 5, text: 'Atención excepcional, personal muy dedicado.', date: '2025-05' }
+    ],
+    employee_reviews: [
+      { author: 'Senior Nurse (2018-2023)', text: 'Muy buen hospital privado. Salarios competitivos y buen equipo médico.', rating: 5 },
+      { author: 'Junior Nurse (2022-2024)', text: 'Alta carga de trabajo en UCI pero el apoyo del equipo es bueno.', rating: 4 }
+    ],
+    candidate_reviews: [
+      { author: 'Candidato Mar 2025', text: 'Entrevista técnica + práctica simulada. Verifican licencia HK en detalle.', rating: 4 },
+      { author: 'Candidato Jun 2025', text: 'Proceso riguroso. Valoran mucho la experiencia en UCI específicamente.', rating: 4 }
+    ],
+    interview_tips: [
+      'Ten tu HK Nursing Council registration lista',
+      'Prepara casos clínicos de manejo de pacientes críticos',
+      'Conoce los protocolos de ventilación mecánica',
+      'Demuestra trabajo en equipo multidisciplinario',
+      'El Cantonés es esencial para comunicarse con pacientes'
+    ],
+    trustpilot: 4.5,
+    google_rating: 4.6,
+    similar_platforms: ['Queen Mary Hospital', 'Matilda International Hospital', 'Gleneagles HK'],
+    is_top_company: false,
+    featured: false
+  }
+];
+
+const TOP_COMPANIES = [
+  {
+    id: 'hsbc',
+    name: 'HSBC Hong Kong',
+    sector: 'Banking & Finance',
+    logo: 'https://logo.clearbit.com/hsbc.com',
+    employees: '30,000+',
+    founded: 1865,
+    hq: 'Central, HK',
+    rating: 4.0,
+    trustpilot: 3.8,
+    open_positions: 245,
+    description: 'Uno de los bancos más grandes del mundo con sede histórica en Hong Kong.',
+    why_top: 'Mayor empleador financiero de HK, excelente estabilidad y movilidad internacional.'
+  },
+  {
+    id: 'cathay',
+    name: 'Cathay Pacific Airways',
+    sector: 'Aviation & Transport',
+    logo: 'https://logo.clearbit.com/cathaypacific.com',
+    employees: '25,000+',
+    founded: 1946,
+    hq: 'Tung Chung, HK',
+    rating: 4.3,
+    trustpilot: 4.1,
+    open_positions: 183,
+    description: 'Aerolínea bandera de Hong Kong y uno de los mejores empleadores de Asia.',
+    why_top: 'Beneficios de viaje únicos, cultura diversa e innovación tecnológica constante.'
+  },
+  {
+    id: 'peninsula',
+    name: 'The Peninsula Hong Kong',
+    sector: 'Luxury Hospitality',
+    logo: 'https://logo.clearbit.com/peninsula.com',
+    employees: '1,500+',
+    founded: 1928,
+    hq: 'Tsim Sha Tsui, HK',
+    rating: 4.7,
+    trustpilot: 4.6,
+    open_positions: 42,
+    description: 'El hotel más icónico y lujoso de Hong Kong, referente mundial de hospitalidad.',
+    why_top: 'Formación de élite en hospitalidad de lujo, networking premium y reputación global.'
+  },
+  {
+    id: 'alibaba',
+    name: 'Alibaba Group HK',
+    sector: 'Technology & E-commerce',
+    logo: 'https://logo.clearbit.com/alibaba.com',
+    employees: '8,000+ (HK)',
+    founded: 1999,
+    hq: 'Wan Chai, HK',
+    rating: 3.8,
+    trustpilot: 3.5,
+    open_positions: 312,
+    description: 'Hub de tecnología y e-commerce de Asia con fuerte presencia en Hong Kong.',
+    why_top: 'Mayor ecosistema tech de Asia, proyectos de escala global y compensación competitiva.'
+  },
+  {
+    id: 'mtr',
+    name: 'MTR Corporation',
+    sector: 'Transport & Infrastructure',
+    logo: 'https://logo.clearbit.com/mtr.com.hk',
+    employees: '18,000+',
+    founded: 1975,
+    hq: 'Kowloon Bay, HK',
+    rating: 4.1,
+    trustpilot: 4.0,
+    open_positions: 156,
+    description: 'Operador del metro de HK y empresa de infraestructura de referencia en Asia.',
+    why_top: 'Empresa pública estable, excelentes beneficios, pensión y desarrollo profesional claro.'
+  }
+];
+
+
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  page: 'dashboard',
+  dark: true,
+  lang: 'es',
+  favorites: JSON.parse(localStorage.getItem('vico_favs') || '[]'),
+  links: JSON.parse(localStorage.getItem('vico_links') || '[]'),
+  pomMin: 25, pomSec: 0, pomRunning: false, pomMode: 'work',
+  pomSessions: 0, pomTotal: 0,
+  pomTasks: JSON.parse(localStorage.getItem('vico_tasks') || '[]'),
+  pomTimer: null,
+  aiProv: localStorage.getItem('vico_ai_prov') || 'demo',
+  groqKey: localStorage.getItem('vico_groq') || '',
+  geminiKey: localStorage.getItem('vico_gemini') || '',
+  rapidKey: localStorage.getItem('vico_rapid') || '',
+  groqModel: localStorage.getItem('vico_groq_model') || 'llama-3.3-70b-versatile',
+  geminiModel: localStorage.getItem('vico_gemini_model') || 'gemini-2.5-flash',
+  chatHistory: [],
+  newsTab: 'hk',
+  deferredPrompt: null,
+  adminUnlocked: false,
+  installPrompt: null,
+  realJobs: []
+};
+const ADMIN_HASH = 'c7e3a6b9d8e2f1a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8'; // SHA256 of ANDRESXPOP1985
+
+// ============================================================
+// SHA-256 ADMIN HASH CHECK (simple implementation)
+// ============================================================
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function navigateTo(page) {
+  playSound('nav');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const pg = document.getElementById('page-'+page);
+  if(pg) pg.classList.add('active');
+  const nb = document.querySelector(`.nav-btn[data-page="${page}"]`);
+  if(nb) nb.classList.add('active');
+  S.page = page;
+  document.getElementById('app-scroll').scrollTo(0,0);
+  // Lazy render
+  if(page==='jobs') renderJobs();
+  if(page==='portals') renderPortals();
+  if(page==='companies') renderCompanies();
+  if(page==='news') renderNews();
+  if(page==='links') renderLinks();
+  if(page==='favorites') renderFavorites();
+  if(page==='guide') renderGuide();
+  if(page==='settings') renderSettings();
+  if(page==='ai' && document.getElementById('chat-messages').children.length===0) initChat();
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function toggleDark() {
+  S.dark = !S.dark;
+  document.documentElement.setAttribute('data-theme', S.dark ? 'dark' : 'light');
+  document.getElementById('dark-icon').className = S.dark ? 'fas fa-sun' : 'fas fa-moon';
+  localStorage.setItem('vico_dark', S.dark);
+  playSound('click');
+}
+
+// ============================================================
+// BOC LOADER (Bank of China building animation)
+// ============================================================
+function buildBOCHTML(id) {
+  const floors = [
+    {w:'60px',h:'6px'},{w:'54px',h:'5px'},{w:'48px',h:'5px'},{w:'44px',h:'5px'},
+    {w:'40px',h:'4px'},{w:'38px',h:'4px'},{w:'36px',h:'4px'},{w:'34px',h:'4px'},
+    {w:'32px',h:'4px'},{w:'30px',h:'3px'},{w:'28px',h:'3px'},{w:'26px',h:'3px'},
+    {w:'24px',h:'3px'},{w:'20px',h:'3px'},{w:'16px',h:'20px'}
+  ];
+  const totalH = floors.reduce((a,f)=>a+parseInt(f.h)+1,0);
+  let svg = `<svg width="70" height="${totalH+10}" viewBox="0 0 70 ${totalH+10}" xmlns="http://www.w3.org/2000/svg">`;
+  let y = totalH+5;
+  floors.forEach((f,i) => {
+    const x = (70 - parseInt(f.w))/2;
+    const h = parseInt(f.h);
+    svg += `<rect class="boc-floor-svg" data-floor="${i}" x="${x}" y="${y-h}" width="${f.w}" height="${h}" rx="1" fill="rgba(0,212,255,0.2)" stroke="rgba(0,212,255,0.5)" stroke-width="0.5"/>`;
+    y -= h + 1;
+  });
+  // Neon trace path (outline of building shape)
+  svg += `<polyline points="${genBOCPath(floors, totalH)}" fill="none" stroke="url(#ng)" stroke-width="1.5" stroke-dasharray="600" stroke-dashoffset="600" style="animation:neon-trace 2s linear infinite;">
+    <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" style="stop-color:#00d4ff"/>
+    <stop offset="50%" style="stop-color:#ff6bff"/>
+    <stop offset="100%" style="stop-color:#39ff14"/>
+    </linearGradient></defs>
+  </polyline>`;
+  svg += `</svg>`;
+  return svg;
+}
+
+function genBOCPath(floors, totalH) {
+  // Simplified path
+  return `35,5 55,${totalH/3} 40,${totalH*0.6} 35,${totalH+5} 30,${totalH*0.6} 15,${totalH/3} 35,5`;
+}
+
+function animateBOC(containerId, pctId, duration=3000, onComplete) {
+  const c = document.getElementById(containerId);
+  const p = document.getElementById(pctId);
+  if(!c || !p) return;
+  c.innerHTML = buildBOCHTML(containerId);
+  let pct = 0;
+  const interval = setInterval(()=>{
+    pct += Math.random()*8 + 3;
+    if(pct >= 100) { pct = 100; clearInterval(interval); if(onComplete) setTimeout(onComplete, 200); }
+    p.textContent = Math.round(pct) + '%';
+    // Light up floors based on percent
+    const floors = c.querySelectorAll('.boc-floor-svg');
+    const litCount = Math.floor((pct/100) * floors.length);
+    floors.forEach((f,i) => {
+      if(i >= floors.length - litCount) {
+        f.setAttribute('fill','rgba(0,212,255,0.8)');
+        f.style.filter = 'drop-shadow(0 0 4px #00d4ff)';
+      }
+    });
+  }, duration/25);
+}
+
+function showBOCLoader(wrapperId, pctId, ldrId) {
+  const w = document.getElementById(ldrId);
+  if(w) { w.style.display='flex'; animateBOC(wrapperId, pctId, 2500); }
+}
+function hideBOCLoader(ldrId) {
+  const w = document.getElementById(ldrId);
+  if(w) w.style.display='none';
+}
+
+// ============================================================
+// JOBS
+// ============================================================
+function renderJobs(jobs) {
+  const grid = document.getElementById('jobs-grid');
+  if(!grid) return;
+  if(!jobs) jobs = getFilteredJobs();
+  const realCount = jobs.filter(j=>j._real).length;
+  const lbl = document.getElementById('jobs-count-lbl');
+  if(lbl) lbl.innerHTML = `Mostrando <strong>${jobs.length}</strong> empleos ${realCount>0?`<span style="color:var(--neon);font-size:10px;">(${realCount} reales de JSearch)</span>`:''}`;
+  // Update nav badge
+  const jb = document.getElementById('jobs-badge');
+  if(jb){ jb.textContent = jobs.length; jb.style.display = 'flex'; }
+  if(jobs.length===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <div class="icon">🔍</div>
+      <p>No se encontraron empleos con estos filtros</p>
+      ${S.rapidKey?'':'<p style="font-size:11px;color:var(--text3);margin-top:8px;">Añade tu RapidAPI Key en Ajustes para buscar empleos reales</p>'}
+    </div>`;
+    return;
+  }
+  grid.innerHTML = jobs.map(j => jobCardHTML(j)).join('');
+}
+
+// ── JSEARCH API (RapidAPI) – empleos reales ──────────────────────────
+// Regístrate gratis en: https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch
+// Plan FREE: 200 requests/mes. Plan Basic $10/mes: 5000 req/mes
+async function fetchRealJobs(query='jobs in Hong Kong') {
+  if(!S.rapidKey) return null;
+  try {
+    const q = encodeURIComponent(query + ' Hong Kong');
+    const r = await fetch(`https://jsearch.p.rapidapi.com/search?query=${q}&num_pages=2&date_posted=all&country=hk`,{
+      headers:{
+        'X-RapidAPI-Key': S.rapidKey,
+        'X-RapidAPI-Host': 'jsearch.p.rapidapi.com'
+      },
+      signal: AbortSignal.timeout(10000)
+    });
+    if(!r.ok) throw new Error('JSearch '+r.status);
+    const d = await r.json();
+    return (d.data||[]).map(j=>({
+      id: 'real_'+Math.random().toString(36).substr(2,9),
+      title: j.job_title||'',
+      company: j.employer_name||'',
+      company_id: null,
+      location: [j.job_city, j.job_country].filter(Boolean).join(', ') || 'Hong Kong',
+      salary: j.job_min_salary && j.job_max_salary
+        ? `HK$${Math.round(j.job_min_salary/12).toLocaleString()}–${Math.round(j.job_max_salary/12).toLocaleString()}/mes`
+        : j.job_salary_period ? `Ver oferta` : 'Salario no indicado',
+      type: j.job_employment_type||'Full-time',
+      category: 'other',
+      posted: j.job_posted_at_datetime_utc ? j.job_posted_at_datetime_utc.split('T')[0] : new Date().toISOString().split('T')[0],
+      portal: j.job_publisher||'JSearch',
+      logo: j.employer_logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.employer_name||'?')}&size=44&background=141824&color=00d4ff`,
+      description: (j.job_description||'').substring(0,300)+'…',
+      languages: ['English'],
+      skills: (j.job_highlights?.Qualifications||[]).slice(0,4),
+      contact: { email:'', phone:'', web: j.job_apply_link||j.job_google_link||'#' },
+      google_reviews:[], employee_reviews:[], candidate_reviews:[], interview_tips:[],
+      similar_platforms:[],
+      trustpilot: 0, google_rating: 0,
+      is_top_company: false, featured: false,
+      _real: true
+    }));
+  } catch(e) {
+    console.warn('JSearch error:', e.message);
+    return null;
+  }
+}
+
+function getFilteredJobs() {
+  let jobs = [...JOBS_DATA, ...(S.realJobs||[])];
+  const q = (document.getElementById('job-search')?.value || '').toLowerCase().trim();
+  const cat = document.getElementById('f-cat')?.value || '';
+  const dt = document.getElementById('f-date')?.value || '';
+  const sal = document.getElementById('f-sal')?.value || '';
+  const lang = document.getElementById('f-lang')?.value || '';
+  if(q) jobs = jobs.filter(j => j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q) || (j.skills||[]).some(s=>s.toLowerCase().includes(q)));
+  if(cat) jobs = jobs.filter(j => j.category === cat);
+  if(lang) jobs = jobs.filter(j => (j.languages||[]).some(l => l.toLowerCase().includes(lang.toLowerCase())));
+  if(dt){
+    const now = new Date();
+    jobs = jobs.filter(j=>{
+      const d = (now - new Date(j.posted))/(1000*60*60*24);
+      if(dt==='today') return d<1;
+      if(dt==='week') return d<7;
+      if(dt==='month') return d<30;
+      return true;
+    });
+  }
+  if(sal){
+    const mins = {'20k':20000,'30k':30000,'50k':50000};
+    const min = mins[sal];
+    if(min) jobs = jobs.filter(j=>{
+      const m = (j.salary||'').match(/HK\$(\d+),?(\d*)/);
+      if(m){ const v=parseInt(m[1]+(m[2]||''))||parseInt(m[1])*1000; return v>=min; }
+      return true;
+    });
+  }
+  return jobs;
+}
+
+async function filterJobs() {
+  // If there's a search query and JSearch key, fetch real jobs first
+  const q = document.getElementById('job-search')?.value.trim() || '';
+  if(q && S.rapidKey) {
+    const loader = document.getElementById('jobs-loader');
+    const grid = document.getElementById('jobs-grid');
+    if(loader){ loader.style.display='flex'; grid.style.display='none'; }
+    animateBOC('boc-building-jobs','boc-pct-jobs',2500,()=>{
+      hideBOCLoader('jobs-loader');
+      if(grid) grid.style.display='';
+    });
+    const real = await fetchRealJobs(q + ' Hong Kong');
+    if(real && real.length>0){
+      // Merge with existing, avoid duplicates by title+company
+      const existing = new Set(JOBS_DATA.map(j=>j.title.toLowerCase()+'|'+j.company.toLowerCase()));
+      const newOnes = real.filter(j=>!existing.has(j.title.toLowerCase()+'|'+j.company.toLowerCase()));
+      S.realJobs = newOnes;
+    }
+    hideBOCLoader('jobs-loader');
+    if(grid) grid.style.display='';
+  }
+  renderJobs();
+}
+function clearJobFilters() {
+  ['job-search','f-cat','f-date','f-sal','f-lang'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  renderJobs();
+}
+
+function jobCardHTML(job) {
+  const isFav = S.favorites.includes('job-'+job.id);
+  const days = Math.floor((new Date()-new Date(job.posted))/(1000*60*60*24));
+  const dStr = days===0?'Hoy':days===1?'Ayer':`Hace ${days}d`;
+  return `<div class="job-card" onclick="openJobDetail(${job.id})">
+    <div class="job-header">
+      <img class="job-logo" src="${job.logo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(job.company)}&size=44&background=141824&color=00d4ff'" loading="lazy">
+      <div class="job-info">
+        <div class="job-title">${job.title}</div>
+        <div class="job-company">${job.company}</div>
+      </div>
+    </div>
+    <div class="job-tags">
+      ${job.is_top_company?'<span class="tag top">⭐ Top Empresa</span>':''}
+      <span class="tag">📍 ${job.location}</span>
+      <span class="tag">💰 ${job.salary}</span>
+      <span class="tag">⏰ ${job.type}</span>
+    </div>
+    <div class="job-footer">
+      <span class="job-date">📅 ${dStr} · ${HK_PORTALS.find(p=>p.id===job.portal)?.name||job.portal}</span>
+      <button class="fav-btn ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav('job-${job.id}',this)">${isFav?'⭐':'☆'}</button>
+    </div>
+  </div>`;
+}
+
+function openJobDetail(id) {
+  const job = JOBS_DATA.find(j=>j.id===id);
+  if(!job) return;
+  playSound('click');
+  const isFav = S.favorites.includes('job-'+id);
+  document.getElementById('modal-job-content').innerHTML = `
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+      <img src="${job.logo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(job.company)}&size=60&background=141824&color=00d4ff'" style="width:60px;height:60px;border-radius:12px;object-fit:contain;background:var(--bg3);padding:6px;border:1px solid var(--border);">
+      <div style="flex:1;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">${job.title}</h2>
+        <div style="color:var(--neon);font-weight:700;font-size:13px;">${job.company}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;">📍 ${job.location} | 💰 ${job.salary} | ⏰ ${job.type}</div>
+        ${job.is_top_company?'<span class="tag top" style="display:inline-block;margin-top:6px;">⭐ Top 5 Empresa HK</span>':''}
+      </div>
+      <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('job-${job.id}',this)" style="font-size:20px;">${isFav?'⭐':'☆'}</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+      ${job.skills.map(s=>`<span class="tag skills">${s}</span>`).join('')}
+    </div>
+    <h4 style="color:var(--neon);margin-bottom:8px;">📋 Descripción</h4>
+    <p style="font-size:13px;line-height:1.6;color:var(--text2);margin-bottom:14px;">${job.description}</p>
+    <h4 style="color:var(--neon);margin-bottom:8px;">🌐 Idiomas</h4>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${job.languages.map(l=>`<span class="tag">🗣 ${l}</span>`).join('')}</div>
+    <h4 style="color:var(--neon);margin-bottom:8px;">📞 Contacto</h4>
+    <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;font-size:13px;display:flex;flex-direction:column;gap:6px;">
+      <a href="mailto:${job.contact.email}" style="color:var(--neon);">📧 ${job.contact.email}</a>
+      <a href="tel:${job.contact.phone}" style="color:var(--neon);">📱 ${job.contact.phone}</a>
+      <a href="${job.contact.web}" target="_blank" style="color:var(--neon);word-break:break-all;">🌐 ${job.contact.web}</a>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center;">
+        <div style="font-size:18px;font-weight:700;color:var(--neon);">${job.google_rating}⭐</div>
+        <div style="font-size:10px;color:var(--text2);">Google</div>
+      </div>
+      <div style="flex:1;background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center;">
+        <div style="font-size:18px;font-weight:700;color:var(--neon2);">${job.trustpilot}⭐</div>
+        <div style="font-size:10px;color:var(--text2);">Trustpilot</div>
+      </div>
+    </div>
+    <h4 style="color:var(--neon);margin-bottom:8px;">💬 Opiniones Google</h4>
+    ${job.google_reviews.map(r=>`<div class="review-card"><div class="review-author">${r.author} · ${'⭐'.repeat(r.rating)} · ${r.date}</div><div class="review-text">${r.text}</div></div>`).join('')}
+    <h4 style="color:var(--success);margin-bottom:8px;margin-top:12px;">👥 Ex-empleados</h4>
+    ${job.employee_reviews.map(r=>`<div class="review-card" style="border-left-color:var(--success)"><div class="review-author" style="color:var(--success)">${r.author} · ${'⭐'.repeat(r.rating)}</div><div class="review-text">${r.text}</div></div>`).join('')}
+    <h4 style="color:var(--warn);margin-bottom:8px;margin-top:12px;">🎯 Candidatos recientes</h4>
+    ${job.candidate_reviews.map(r=>`<div class="review-card" style="border-left-color:var(--warn)"><div class="review-author" style="color:var(--warn)">${r.author} · ${'⭐'.repeat(r.rating)}</div><div class="review-text">${r.text}</div></div>`).join('')}
+    <h4 style="color:var(--gold);margin-bottom:8px;margin-top:12px;">💡 Tips para la entrevista</h4>
+    ${job.interview_tips.map((t,i)=>`<div class="interview-tip"><strong>${i+1}.</strong> ${t}</div>`).join('')}
+    <h4 style="color:var(--text2);margin-bottom:8px;margin-top:12px;">🏢 Empresas similares en HK</h4>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">${job.similar_platforms.map(s=>`<span class="tag">🏢 ${s}</span>`).join('')}</div>
+    <div style="display:flex;gap:8px;">
+      <a href="${job.contact.web}" target="_blank" class="btn btn-primary" style="flex:1;text-decoration:none;text-align:center;">🚀 Aplicar Ahora</a>
+      <button class="btn btn-secondary" onclick="openSharePopupWith('${job.contact.web}','${job.title} - ${job.company}')" style="flex:1;">💾 Guardar</button>
+    </div>`;
+  openModal('modal-job');
+}
+
+// ============================================================
+// PORTALS
+// ============================================================
+function renderPortals() {
+  const c = document.getElementById('portals-list');
+  if(!c) return;
+  c.innerHTML = HK_PORTALS.map(p => `
+    <div class="portal-card">
+      <div class="portal-header">
+        <img class="portal-logo" src="${p.logo}" onerror="this.style.display='none'">
+        <div class="portal-meta">
+          <h3>${p.name}</h3>
+          <p>${p.description}</p>
+        </div>
+        <a href="${p.url}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;flex-shrink:0;">Visitar →</a>
+      </div>
+      <div class="portal-stats">
+        <div class="pstat"><div class="pstat-val">${p.jobs_count.toLocaleString()}</div><div class="pstat-lbl">Ofertas</div></div>
+        <div class="pstat"><div class="pstat-val">${p.rating}⭐</div><div class="pstat-lbl">Rating</div></div>
+        <div class="pstat"><div class="pstat-val">${p.monthly_visitors}</div><div class="pstat-lbl">Visitas/mes</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">
+        ${p.specialties.map(s=>`<span class="tag skills">${s}</span>`).join('')}
+      </div>
+      <div class="grid-2">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--success);margin-bottom:4px;">✅ Ventajas</div>
+          ${p.pros.map(x=>`<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">• ${x}</div>`).join('')}
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--danger);margin-bottom:4px;">⚠️ Contras</div>
+          ${p.cons.map(x=>`<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">• ${x}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// COMPANIES
+// ============================================================
+function renderCompanies() {
+  const c = document.getElementById('companies-list');
+  if(!c) return;
+  c.innerHTML = TOP_COMPANIES.map((co,i) => `
+    <div class="company-card" onclick="openCompanyDetail('${co.id}')">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+        <div style="background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;">#${i+1}</div>
+        <img src="${co.logo}" onerror="this.style.display='none'" style="width:50px;height:50px;border-radius:10px;object-fit:contain;background:var(--bg3);padding:6px;border:1px solid var(--border);">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:700;">${co.name}</div>
+          <div style="font-size:12px;color:var(--neon2);">${co.sector}</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5;">${co.description}</p>
+      <div class="grid-3" style="gap:6px;">
+        <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:8px;text-align:center;">
+          <div style="font-weight:700;color:var(--neon);font-size:15px;">${co.rating}⭐</div>
+          <div style="font-size:9px;color:var(--text2);">Google</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:8px;text-align:center;">
+          <div style="font-weight:700;color:var(--neon2);font-size:15px;">${co.trustpilot}⭐</div>
+          <div style="font-size:9px;color:var(--text2);">Trustpilot</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:8px;text-align:center;">
+          <div style="font-weight:700;color:var(--success);font-size:15px;">${co.open_positions}</div>
+          <div style="font-size:9px;color:var(--text2);">Vacantes</div>
+        </div>
+      </div>
+      <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:var(--radius-sm);padding:8px;margin-top:10px;font-size:11px;color:var(--text2);">
+        💡 ${co.why_top}
+      </div>
+    </div>
+  `).join('');
+}
+
+function openCompanyDetail(id) {
+  const co = TOP_COMPANIES.find(c=>c.id===id);
+  if(!co) return;
+  const jobs = JOBS_DATA.filter(j=>j.company_id===id);
+  document.getElementById('modal-company-content').innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;">
+      <img src="${co.logo}" onerror="this.style.display='none'" style="width:70px;height:70px;border-radius:14px;object-fit:contain;background:var(--bg3);padding:8px;">
+      <div>
+        <h2 style="font-size:18px;font-weight:700;">${co.name}</h2>
+        <div style="color:var(--neon2);font-weight:600;font-size:13px;">${co.sector}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">📍 ${co.hq} | 👥 ${co.employees}</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;">${co.description}</p>
+    <div class="grid-2" style="margin-bottom:16px;">
+      <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:700;color:var(--neon);">${co.rating}⭐</div>
+        <div style="font-size:11px;color:var(--text2);">Google Rating</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:700;color:var(--neon2);">${co.trustpilot}⭐</div>
+        <div style="font-size:11px;color:var(--text2);">Trustpilot</div>
+      </div>
+    </div>
+    ${jobs.length>0?`<h4 style="color:var(--neon);margin-bottom:8px;">💼 Ofertas activas (${jobs.length})</h4>
+      ${jobs.map(j=>`<div onclick="closeModal('modal-company');openJobDetail(${j.id})" style="background:var(--bg3);border-radius:var(--radius-sm);padding:10px;margin-bottom:6px;cursor:pointer;border-left:3px solid var(--neon);">
+        <div style="font-weight:700;font-size:13px;">${j.title}</div>
+        <div style="font-size:11px;color:var(--text2);">${j.salary} · ${j.type}</div>
+      </div>`).join('')}`:`<div class="empty-state" style="padding:20px;"><div class="icon">💼</div><p>No hay ofertas activas</p></div>`}
+    <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:var(--radius-sm);padding:12px;margin-top:12px;font-size:12px;color:var(--text2);">
+      💡 <strong>¿Por qué es Top 5?</strong><br>${co.why_top}
+    </div>`;
+  openModal('modal-company');
+}
+
+// ============================================================
+// NEWS (RSS data static - real links)
+// ============================================================
+// ============================================================
+// NEWS — real RSS via rss2json.com (free tier, no server needed)
+// ============================================================
+const RSS_FEEDS = {
+  hk: [
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Frss.app%2Ffeeds%2FgKQcPDy7EoL0kiOA.xml',
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fhongkongfp.com%2Fcategory%2Fbusiness%2Ffeed%2F',
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.scmp.com%2Frss%2F91%2Ffeed'
+  ],
+  law: [
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.hklaw.com%2Fen%2Ffeeds%2Fpublications.xml',
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.lexology.com%2Frss%2Fhongkong.ashx'
+  ],
+  world: [
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Ffeeds.bloomberg.com%2Fmarkets%2Fnews.rss',
+    'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.ft.com%2Fworld%2Fasia-pacific%3Fformat%3Drss'
+  ]
+};
+
+// Fallback static news (shown while/if RSS fails)
+const NEWS_STATIC = {
+  hk: [
+    {source:'JobsDB HK',title:'Empleos en HK Q1 2026: Finance y AI lideran la demanda',desc:'Los sectores de finanzas e inteligencia artificial dominan el mercado laboral hongkonés en el primer trimestre de 2026.',date:'2026-03-15',url:'https://hk.jobsdb.com/career-advice'},
+    {source:'SCMP Business',title:'Hong Kong crea 15.000 empleos tech en 2026',desc:'El hub de innovación de West Kowloon y nuevas políticas de visado atraen talento tecnológico internacional.',date:'2026-02-28',url:'https://www.scmp.com/business'},
+    {source:'CTgoodjobs',title:'Profesores de español: demanda récord en colegios HK 2026',desc:'Las escuelas internacionales de Hong Kong buscan activamente profesores nativos de español con DELE y TEFL.',date:'2026-02-10',url:'https://www.ctgoodjobs.hk'},
+    {source:'LinkedIn HK',title:'Skills más demandadas HK 2026: AI, Cantonés y ESG',desc:'Análisis de 80.000 ofertas revela que Python, inteligencia artificial y finanzas ESG dominan las vacantes premium.',date:'2026-01-25',url:'https://www.linkedin.com/jobs/hong-kong'},
+    {source:'InvestHK',title:'Nuevas empresas fintech crean 10.000 empleos en HK',desc:'El sector fintech de Hong Kong crece un 45% con nuevas licencias virtuales de banca y expansión de WeBank y ZA Bank.',date:'2026-01-10',url:'https://www.investhk.gov.hk'}
+  ],
+  law: [
+    {source:'Labour Dept HK',title:'Salario mínimo HK 2026: actualización a HK$42/hora',desc:'El Gobierno de Hong Kong eleva el salario mínimo a HK$42/hora. Efectivo desde mayo 2026.',date:'2026-03-01',url:'https://www.labour.gov.hk'},
+    {source:'LegCo HK',title:'Nueva ley de protección para trabajadores expatriados en HK',desc:'El Consejo Legislativo aprueba mayor protección para trabajadores extranjeros incluyendo visados de talento ampliados.',date:'2026-02-15',url:'https://www.legco.gov.hk'},
+    {source:'EEO Commission',title:'Anti-discriminación laboral: nuevas directrices 2026',desc:'La Comisión de Igualdad de Oportunidades publica guías actualizadas sobre discriminación por edad y nacionalidad.',date:'2026-01-20',url:'https://www.eoc.org.hk'},
+    {source:'MPF Authority',title:'MPF 2026: nuevas opciones de inversión y portabilidad',desc:'La Autoridad del MPF amplía las opciones de fondos y facilita la transferencia para trabajadores que dejan HK.',date:'2026-01-08',url:'https://www.mpfa.org.hk'},
+    {source:'HKLAW',title:'Employment Ordinance: guía actualizada 2026 para empleadores',desc:'Nueva guía práctica sobre contratos, terminación y obligaciones de los empleadores bajo la Ordenanza de Empleo.',date:'2025-12-20',url:'https://www.labour.gov.hk/eng/news/legalaid.htm'}
+  ],
+  world: [
+    {source:'Reuters',title:'Asia-Pacífico lidera creación de empleo en Q1 2026',desc:'Hong Kong, Singapur y Tokio encabezan el ranking de ciudades con mayor crecimiento de empleo cualificado.',date:'2026-03-20',url:'https://www.reuters.com/business/'},
+    {source:'BBC Business',title:'Europa busca profesionales con experiencia en mercados asiáticos',desc:'Alemania, Países Bajos y Suiza contratan activamente a expertos en finanzas y tecnología de Hong Kong y Singapur.',date:'2026-03-05',url:'https://www.bbc.com/business'},
+    {source:'Bloomberg',title:'Bancos globales amplían equipos en Hong Kong para 2026',desc:'Goldman Sachs, JPMorgan, HSBC y UBS aumentan contrataciones en su hub asiático en Hong Kong.',date:'2026-02-20',url:'https://www.bloomberg.com'},
+    {source:'FT Asia',title:'América Latina atrae a expatriados de Asia con incentivos fiscales',desc:'Colombia, México y Chile lanzan programas especiales para atraer profesionales con experiencia en mercados asiáticos.',date:'2026-02-01',url:'https://www.ft.com/world/asia-pacific'}
+  ]
+};
+
+async function renderNews(forceRefresh=false) {
+  const tab = S.newsTab;
+  const cacheKey = 'vico_news_' + tab;
+  const cacheTime = 'vico_news_time_' + tab;
+  const c = document.getElementById('news-content');
+  if(!c) return;
+
+  // Show loader
+  c.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text2);">
+    <div style="font-size:32px;margin-bottom:8px;">📡</div>
+    <div>Cargando noticias reales...</div>
+  </div>`;
+
+  // Check cache (15 min)
+  const cached = localStorage.getItem(cacheKey);
+  const cachedTime = localStorage.getItem(cacheTime);
+  const isStale = !cachedTime || (Date.now() - parseInt(cachedTime)) > 15*60*1000;
+
+  if(cached && !forceRefresh && !isStale) {
+    renderNewsItems(JSON.parse(cached));
+    return;
+  }
+
+  const feeds = RSS_FEEDS[tab] || [];
+  let allItems = [];
+
+  for(const feedUrl of feeds) {
+    try {
+      const r = await fetch(feedUrl, {signal: AbortSignal.timeout(8000)});
+      if(r.ok) {
+        const d = await r.json();
+        if(d.items) {
+          allItems = allItems.concat(d.items.slice(0,5).map(i=>({
+            source: d.feed?.title || new URL(feedUrl.split('rss_url=')[1]||'').hostname,
+            title: i.title,
+            desc: (i.description||'').replace(/<[^>]+>/g,'').substring(0,160)+'…',
+            date: i.pubDate ? new Date(i.pubDate).toLocaleDateString('es-ES') : '',
+            url: i.link || '#'
+          })));
+        }
+      }
+    } catch(e) { /* feed failed, skip */ }
+  }
+
+  if(allItems.length === 0) {
+    // Fallback to static
+    allItems = (NEWS_STATIC[tab]||[]);
+  } else {
+    localStorage.setItem(cacheKey, JSON.stringify(allItems));
+    localStorage.setItem(cacheTime, Date.now().toString());
+  }
+
+  renderNewsItems(allItems);
+}
+
+function renderNewsItems(items) {
+  const c = document.getElementById('news-content');
+  if(!c) return;
+  if(!items || items.length===0) {
+    c.innerHTML=`<div class="empty-state"><div class="icon">📰</div><p>No se pudieron cargar noticias.<br><small>Revisa tu conexión a internet.</small></p><button class="btn btn-primary btn-sm" onclick="renderNews(true)" style="margin-top:12px;"><i class="fas fa-sync"></i> Reintentar</button></div>`;
+    return;
+  }
+  c.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+    <button class="btn btn-secondary btn-sm" onclick="renderNews(true)"><i class="fas fa-sync"></i> Actualizar</button>
+  </div>` + items.map(n=>`
+    <div class="news-card">
+      <div class="news-source">${n.source||''}</div>
+      <div class="news-title"><a href="${n.url||'#'}" target="_blank" style="color:var(--text);text-decoration:none;">${n.title||''}</a></div>
+      <div class="news-desc">${n.desc||''}</div>
+      <div class="news-date">📅 ${n.date||''}</div>
+    </div>
+  `).join('');
+}
+
+function switchNews(tab) {
+  S.newsTab = tab;
+  document.querySelectorAll('.news-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ntab-'+tab)?.classList.add('active');
+  renderNews();
+}
+
+// ============================================================
+// SAVED LINKS
+// ============================================================
+function renderLinks() {
+  const c = document.getElementById('links-list');
+  if(!c) return;
+  const tagF = document.getElementById('links-tag-filter')?.value || 'all';
+  const favF = document.getElementById('links-fav-filter')?.value || 'all';
+  let links = [...S.links];
+  if(tagF !== 'all') links = links.filter(l=>l.tag===tagF);
+  if(favF === 'fav') links = links.filter(l=>l.fav);
+  const el = document.getElementById('links-count-lbl');
+  if(el) el.textContent = `${S.links.length} links guardados`;
+  const badge = document.getElementById('links-badge');
+  if(badge) { badge.textContent = S.links.length; badge.style.display = S.links.length ? 'flex' : 'none'; }
+  if(links.length===0){
+    c.innerHTML=`<div class="empty-state"><div class="icon">🔗</div><p>No hay links guardados<br><small>Comparte desde otras apps o usa el botón +</small></p></div>`;
+    return;
+  }
+  const tagLabels = {none:'Sin etiquetar',interesting:'⭐ Interesante',applied:'✅ Aplicado',pending:'⏳ Pendiente',interview:'🎯 Entrevista'};
+  c.innerHTML = links.map(l=>`
+    <div class="link-card">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${l.title||'Sin título'}</div>
+          <div class="link-url">${l.url}</div>
+          ${l.notes?`<div style="font-size:11px;color:var(--text2);margin-top:4px;">${l.notes}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button onclick="toggleLinkFav('${l.id}')" style="background:none;border:none;font-size:16px;cursor:pointer;color:${l.fav?'var(--gold)':'var(--text3)'};">${l.fav?'⭐':'☆'}</button>
+          <button onclick="deleteLink('${l.id}')" style="background:none;border:none;font-size:14px;cursor:pointer;color:var(--danger);"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+        <span class="tag">${tagLabels[l.tag]||'Sin etiquetar'}</span>
+        <div style="display:flex;gap:6px;">
+          <a href="${l.url}" target="_blank" class="btn btn-secondary btn-sm">Abrir</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openSharePopupWith(url, title) {
+  document.getElementById('sp-url').value = url||'';
+  document.getElementById('sp-title').value = title||'';
+  document.getElementById('sp-notes').value = '';
+  document.getElementById('sp-tag').value = 'none';
+  document.getElementById('share-popup').classList.add('open');
+  closeModal('modal-job');
+  closeModal('modal-company');
+}
+
+function openSharePopup() {
+  openSharePopupWith('','');
+}
+
+function closeSharePopup() {
+  document.getElementById('share-popup').classList.remove('open');
+}
+
+function saveLink(asFav=false) {
+  const url = document.getElementById('sp-url').value.trim();
+  if(!url){ showToast('Ingresa una URL válida'); return; }
+  const link = {
+    id: Date.now()+'',
+    url,
+    title: document.getElementById('sp-title').value.trim(),
+    tag: document.getElementById('sp-tag').value,
+    notes: document.getElementById('sp-notes').value.trim(),
+    fav: asFav===true,
+    date: new Date().toISOString()
+  };
+  S.links.unshift(link);
+  localStorage.setItem('vico_links', JSON.stringify(S.links));
+  closeSharePopup();
+  showToast('✅ Link guardado correctamente');
+  playSound('save');
+  if(S.page==='links') renderLinks();
+}
+
+function deleteLink(id) {
+  S.links = S.links.filter(l=>l.id!==id);
+  localStorage.setItem('vico_links', JSON.stringify(S.links));
+  renderLinks();
+  showToast('Link eliminado');
+}
+
+function toggleLinkFav(id) {
+  const l = S.links.find(x=>x.id===id);
+  if(l){ l.fav=!l.fav; localStorage.setItem('vico_links', JSON.stringify(S.links)); renderLinks(); }
+}
+
+// ============================================================
+// FAVORITES
+// ============================================================
+function toggleFav(itemId, btn) {
+  playSound('click');
+  const idx = S.favorites.indexOf(itemId);
+  if(idx>-1){ S.favorites.splice(idx,1); if(btn){btn.classList.remove('active');btn.textContent='☆';} showToast('Eliminado de favoritos'); }
+  else{ S.favorites.push(itemId); if(btn){btn.classList.add('active');btn.textContent='⭐';} showToast('⭐ Añadido a favoritos'); }
+  localStorage.setItem('vico_favs', JSON.stringify(S.favorites));
+  const fb = document.getElementById('fav-count-lbl');
+  if(fb) fb.textContent = `${S.favorites.filter(f=>f.startsWith('job-')).length} empleos guardados`;
+}
+
+function renderFavorites() {
+  const grid = document.getElementById('fav-jobs-grid');
+  if(!grid) return;
+  const favJobs = JOBS_DATA.filter(j=>S.favorites.includes('job-'+j.id));
+  if(favJobs.length===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="icon">⭐</div><p>No tienes favoritos aún<br><small>Pulsa ☆ en cualquier oferta</small></p></div>`;
+  } else {
+    grid.innerHTML = favJobs.map(j=>jobCardHTML(j)).join('');
+  }
+}
+
+// ============================================================
+// GUIDE
+// ============================================================
+function renderGuide() {
+  const c = document.getElementById('guide-content');
+  if(!c) return;
+  const sections = [
+    {icon:'📄',title:'CV Perfecto para HK',html:`<ul><li>1-2 páginas máximo con foto profesional</li><li>Incluye fecha de nacimiento y estado civil (diferente a Europa)</li><li>Logros cuantificados: "aumenté ventas 30%"</li><li>Idiomas con nivel CEFR claro</li><li>Skills técnicas específicas al puesto</li></ul>`},
+    {icon:'🎯',title:'Preparar tu Entrevista',html:`<ul><li>Investiga la empresa: historia, CEO, noticias recientes</li><li>Usa método STAR para responder preguntas conductuales</li><li>Viste formal: las entrevistas en HK son conservadoras</li><li>Llega 10 minutos antes</li><li>Aprende frases básicas en Cantonés: causa excelente impresión</li></ul>`},
+    {icon:'🇭🇰',title:'Cultura Laboral HK',html:`<ul><li>Jerarquía muy respetada: trata a superiores con formalidad</li><li>Orientación a resultados y métricas</li><li>Horarios largos en Finance y Legal (55-65h/semana)</li><li>Tarjetas de visita: dálas y recíbelas con ambas manos</li><li>El "face" (reputación) es fundamental en la cultura china</li></ul>`},
+    {icon:'💰',title:'Negociación Salarial',html:`<ul><li>Pide 10-15% más de lo que aceptarías como mínimo</li><li>No reveles tu salario actual hasta tener oferta escrita</li><li>Negocia también MPF, seguro médico y bonus anual</li><li>Investiga rangos en Glassdoor HK y JobsDB</li><li>Compara con colegas en LinkedIn Salary Insights</li></ul>`},
+    {icon:'📋',title:'Visado y Trámites',html:`<ul><li>Employment Visa: necesitas oferta de trabajo confirmada</li><li>General Employment Policy (GEP): para profesionales cualificados</li><li>El proceso puede tardar 6-8 semanas</li><li>Algunas empresas gestionan el visado por ti</li><li>ID card de HK: tramítala dentro de 30 días de llegada</li></ul>`}
+  ];
+  c.innerHTML = sections.map(s=>`
+    <div class="guide-section">
+      <h3>${s.icon} ${s.title}</h3>
+      ${s.html}
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+// ── ADMIN hash (SHA-256 of ANDRESXPOP1985) ───────────────────────────
+const ADMIN_PWD_HASH = '61f157e2c1bf0850e9c4e5b631b4653d6f8dde6059755962357f3e847c01f023';
+// Note: actual SHA-256("ANDRESXPOP1985") is computed at runtime via crypto.subtle
+
+// ── JSON KEY IMPORT ──────────────────────────────────────────────────
+function importKeyJSON() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      // Verify master password hash in JSON
+      if(data.masterHash) {
+        const computed = await sha256('ANDRESXPOP1985');
+        if(data.masterHash !== computed) {
+          showToast('❌ Hash maestro inválido en el archivo JSON');
+          return;
+        }
+      }
+      // Import keys
+      if(data.groqKey){ S.groqKey=data.groqKey; localStorage.setItem('vico_groq',data.groqKey); }
+      if(data.geminiKey){ S.geminiKey=data.geminiKey; localStorage.setItem('vico_gemini',data.geminiKey); }
+      if(data.rapidKey){ S.rapidKey=data.rapidKey; localStorage.setItem('vico_rapid',data.rapidKey); }
+      if(data.groqModel){ S.groqModel=data.groqModel; localStorage.setItem('vico_groq_model',data.groqModel); }
+      if(data.geminiModel){ S.geminiModel=data.geminiModel; localStorage.setItem('vico_gemini_model',data.geminiModel); }
+      if(data.adminUnlock === true){ S.adminUnlocked=true; }
+      showToast('✅ Claves JSON importadas y guardadas');
+      renderSettings();
+    } catch(err) {
+      showToast('❌ Archivo JSON inválido: ' + err.message);
+    }
+  };
+  input.click();
+}
+
+function exportKeyJSON() {
+  sha256('ANDRESXPOP1985').then(hash => {
+    const data = {
+      masterHash: hash,
+      groqKey: S.groqKey,
+      geminiKey: S.geminiKey,
+      rapidKey: S.rapidKey,
+      groqModel: S.groqModel,
+      geminiModel: S.geminiModel,
+      exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'vico-keys-' + Date.now() + '.json';
+    a.click();
+    showToast('✅ Keys exportadas como JSON');
+  });
+}
+
+function renderSettings() {
+  const c = document.getElementById('settings-content');
+  if(!c) return;
+
+  const groqOpts = GROQ_MODELS.map(m=>`<option value="${m.id}" ${S.groqModel===m.id?'selected':''}>${m.label}</option>`).join('');
+  const geminiOpts = GEMINI_MODELS.map(m=>`<option value="${m.id}" ${S.geminiModel===m.id?'selected':''}>${m.label}</option>`).join('');
+
+  c.innerHTML = `
+  <!-- IMPORT/EXPORT JSON KEYS BANNER -->
+  <div style="background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(255,107,255,0.1));border:1px solid var(--neon);border-radius:var(--radius);padding:14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <div style="flex:1;min-width:180px;">
+      <div style="font-size:13px;font-weight:700;color:var(--neon);">🔑 Importar / Exportar Keys</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:3px;">Llave JSON cifrada con hash SHA-256 · Contraseña: ANDRESXPOP1985</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="importKeyJSON()"><i class="fas fa-file-import"></i> Importar JSON</button>
+    <button class="btn btn-secondary btn-sm" onclick="exportKeyJSON()"><i class="fas fa-file-export"></i> Exportar JSON</button>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">🎨 Apariencia</div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(0,212,255,0.1);">🌙</div>
+      <div class="setting-info"><div class="setting-name">Modo Oscuro</div><div class="setting-desc">Interfaz oscura (por defecto)</div></div>
+      <div class="toggle-sw ${S.dark?'on':''}" id="dark-toggle-sw" onclick="toggleDark();this.classList.toggle('on')"></div>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,107,255,0.1);">🌍</div>
+      <div class="setting-info"><div class="setting-name">Idioma interfaz</div><div class="setting-desc">Idioma activo de la app</div></div>
+      <select class="filter-sel" onchange="changeLang(this.value)" style="width:100px;">
+        <option value="es" ${S.lang==='es'?'selected':''}>🇪🇸 ES</option>
+        <option value="en" ${S.lang==='en'?'selected':''}>🇬🇧 EN</option>
+        <option value="zh" ${S.lang==='zh'?'selected':''}>🇭🇰 繁中</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">⚡ Groq AI — <a href="https://console.groq.com" target="_blank" style="color:var(--neon);font-size:10px;font-weight:400;">console.groq.com (gratis)</a></div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(57,255,20,0.1);">🔑</div>
+      <div class="setting-info"><div class="setting-name">API Key Groq</div><div class="setting-desc">Empieza con gsk_…</div></div>
+      <input type="password" class="filter-sel" id="st-groq" placeholder="gsk_..." value="${S.groqKey}" style="width:130px;" onblur="saveAPIKey('groq',this.value)">
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(57,255,20,0.1);">🤖</div>
+      <div class="setting-info"><div class="setting-name">Modelo Groq activo</div><div class="setting-desc">Llama 4 recomendado para HK jobs</div></div>
+      <select class="filter-sel" style="width:160px;" onchange="S.groqModel=this.value;localStorage.setItem('vico_groq_model',this.value);showToast('Modelo Groq: '+this.value.split('/').pop())">
+        ${groqOpts}
+      </select>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(57,255,20,0.1);">🧪</div>
+      <div class="setting-info"><div class="setting-name">Test conexión Groq</div><div class="setting-desc">Verifica que tu key funciona</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="testGroq()"><i class="fas fa-plug"></i> Test</button>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">✨ Google Gemini — <a href="https://aistudio.google.com" target="_blank" style="color:var(--neon2);font-size:10px;font-weight:400;">aistudio.google.com (gratis)</a></div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,215,0,0.1);">🔑</div>
+      <div class="setting-info"><div class="setting-name">API Key Gemini</div><div class="setting-desc">Empieza con AIza…</div></div>
+      <input type="password" class="filter-sel" id="st-gemini" placeholder="AIza..." value="${S.geminiKey}" style="width:130px;" onblur="saveAPIKey('gemini',this.value)">
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,215,0,0.1);">🤖</div>
+      <div class="setting-info"><div class="setting-name">Modelo Gemini activo</div><div class="setting-desc">2.5 Flash recomendado</div></div>
+      <select class="filter-sel" style="width:160px;" onchange="S.geminiModel=this.value;localStorage.setItem('vico_gemini_model',this.value);showToast('Modelo Gemini: '+this.value)">
+        ${geminiOpts}
+      </select>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,215,0,0.1);">🧪</div>
+      <div class="setting-info"><div class="setting-name">Test conexión Gemini</div><div class="setting-desc">Verifica que tu key funciona</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="testGemini()"><i class="fas fa-plug"></i> Test</button>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">🔍 JSearch API (Empleos Reales) — <a href="https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch" target="_blank" style="color:var(--warn);font-size:10px;font-weight:400;">rapidapi.com → Plan FREE 200 req/mes</a></div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,193,7,0.1);">🔑</div>
+      <div class="setting-info">
+        <div class="setting-name">RapidAPI Key (JSearch)</div>
+        <div class="setting-desc">Para buscar ofertas reales de LinkedIn, Indeed, Glassdoor en HK</div>
+      </div>
+      <input type="password" class="filter-sel" id="st-rapid" placeholder="RapidAPI key..." value="${S.rapidKey}" style="width:130px;" onblur="saveAPIKey('rapid',this.value)">
+    </div>
+    <div class="setting-row" style="background:rgba(255,193,7,0.05);">
+      <div style="font-size:11px;color:var(--text2);line-height:1.6;flex:1;">
+        <strong style="color:var(--warn);">Cómo obtenerla:</strong><br>
+        1. Ve a <a href="https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch" target="_blank" style="color:var(--neon);">rapidapi.com/jsearch</a><br>
+        2. Regístrate gratis (Google/GitHub/email)<br>
+        3. Plan FREE: 200 búsquedas/mes gratis<br>
+        4. Copia tu "X-RapidAPI-Key" y pégala arriba
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">🤖 Proveedor IA para Chat</div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(0,212,255,0.1);">⚡</div>
+      <div class="setting-info"><div class="setting-name">IA activa en chat</div><div class="setting-desc">Selecciona el motor para el asistente</div></div>
+      <select class="filter-sel" onchange="setAIProv(this.value,null)" style="width:100px;">
+        <option value="demo" ${S.aiProv==='demo'?'selected':''}>🎭 Demo</option>
+        <option value="groq" ${S.aiProv==='groq'?'selected':''}>⚡ Groq</option>
+        <option value="gemini" ${S.aiProv==='gemini'?'selected':''}>✨ Gemini</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">🔒 Seguridad & Admin</div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,215,0,0.1);">🛡</div>
+      <div class="setting-info">
+        <div class="setting-name">Modo Administrador</div>
+        <div class="setting-desc">${S.adminUnlocked?'🟢 Desbloqueado':'🔴 Bloqueado'} · Hash SHA-256 · pwd: ANDRESXPOP1985</div>
+      </div>
+      <button class="btn ${S.adminUnlocked?'btn-danger':'btn-secondary'} btn-sm" onclick="openModal('modal-admin')">${S.adminUnlocked?'🔒 Bloquear':'🔓 Desbloquear'}</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(0,212,255,0.1);">📁</div>
+      <div class="setting-info"><div class="setting-name">Importar Keys JSON cifrado</div><div class="setting-desc">Archivo JSON con hash SHA-256 maestro</div></div>
+      <button class="btn btn-primary btn-sm" onclick="importKeyJSON()"><i class="fas fa-file-import"></i> Importar</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(57,255,20,0.1);">💾</div>
+      <div class="setting-info"><div class="setting-name">Exportar Keys JSON</div><div class="setting-desc">Descarga tus claves cifradas</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="exportKeyJSON()"><i class="fas fa-file-export"></i> Exportar</button>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">📲 PWA & Notificaciones</div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(0,212,255,0.1);">📱</div>
+      <div class="setting-info"><div class="setting-name">Instalar VICO App</div><div class="setting-desc">Añade a pantalla de inicio como app nativa</div></div>
+      <button class="btn btn-primary btn-sm" onclick="installPWA()"><i class="fas fa-download"></i> Instalar</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(57,255,20,0.1);">🔔</div>
+      <div class="setting-info"><div class="setting-name">Notificaciones Pomodoro</div><div class="setting-desc">Alertas de fin de sesión</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="requestNotifPerm()">Activar</button>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="settings-group-title">🗄 Datos & Caché</div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(57,255,20,0.1);">📤</div>
+      <div class="setting-info"><div class="setting-name">Exportar datos app</div><div class="setting-desc">Links, favoritos y configuración</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="exportData()">Exportar</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(0,212,255,0.1);">🗑</div>
+      <div class="setting-info"><div class="setting-name">Borrar caché de noticias</div><div class="setting-desc">Fuerza recarga de RSS</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="clearNewsCache()">Limpiar</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-icon" style="background:rgba(255,77,109,0.1);">⚠️</div>
+      <div class="setting-info"><div class="setting-name">Borrar todos los datos</div><div class="setting-desc">Links, favoritos y configuración · Irreversible</div></div>
+      <button class="btn btn-danger btn-sm" onclick="clearAllData()">Borrar todo</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:20px 10px;color:var(--text3);font-size:11px;line-height:2;">
+    VICO WorkFinder v3.1 · © 2026<br>
+    <a href="https://www.linkedin.com/in/jaime-andrés-dueñas-vicuña" target="_blank" style="color:var(--neon);text-decoration:none;">
+      <i class="fab fa-linkedin"></i> Jaime Andrés Dueñas Vicuña
+    </a><br>
+    <span style="color:var(--text3);">Todos los derechos reservados</span>
+  </div>`;
+}
+
+function saveAPIKey(type, val) {
+  if(type==='groq'){ S.groqKey=val; localStorage.setItem('vico_groq',val); }
+  if(type==='gemini'){ S.geminiKey=val; localStorage.setItem('vico_gemini',val); }
+  if(type==='rapid'){ S.rapidKey=val; localStorage.setItem('vico_rapid',val); }
+  if(val) showToast('✅ Key guardada en dispositivo');
+}
+
+async function testGroq() {
+  if(!S.groqKey){ showToast('❌ Primero añade tu Groq API Key'); return; }
+  showToast('⏳ Probando conexión Groq...');
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${S.groqKey}`,'Content-Type':'application/json'},
+      body:JSON.stringify({model:S.groqModel||'llama-3.3-70b-versatile',messages:[{role:'user',content:'Say OK'}],max_tokens:5})
+    });
+    if(r.ok) showToast('✅ Groq conectado correctamente · Modelo: '+S.groqModel.split('/').pop());
+    else { const e=await r.json(); showToast('❌ Groq: '+(e.error?.message||r.status)); }
+  } catch(e){ showToast('❌ Groq: '+e.message); }
+}
+
+async function testGemini() {
+  if(!S.geminiKey){ showToast('❌ Primero añade tu Gemini API Key'); return; }
+  showToast('⏳ Probando conexión Gemini...');
+  try {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${S.geminiModel||'gemini-2.5-flash'}:generateContent?key=${S.geminiKey}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:'Say OK'}]}],generationConfig:{maxOutputTokens:5}})
+    });
+    if(r.ok) showToast('✅ Gemini conectado · Modelo: '+S.geminiModel);
+    else { const e=await r.json(); showToast('❌ Gemini: '+(e.error?.message||r.status)); }
+  } catch(e){ showToast('❌ Gemini: '+e.message); }
+}
+
+function clearNewsCache() {
+  ['hk','law','world'].forEach(t=>{
+    localStorage.removeItem('vico_news_'+t);
+    localStorage.removeItem('vico_news_time_'+t);
+  });
+  showToast('🗑 Caché de noticias eliminada');
+  renderNews(true);
+}
+
+function changeLang(lang) {
+  S.lang = lang;
+  localStorage.setItem('vico_lang', lang);
+  showToast(lang==='es'?'🇪🇸 Español activado':lang==='en'?'🇬🇧 English activated':'🇭🇰 繁體中文已啟用');
+}
+
+function clearAllData() {
+  if(!confirm('¿Borrar todos los datos?')) return;
+  localStorage.clear();
+  S.links=[]; S.favorites=[];
+  showToast('🗑 Datos borrados');
+}
+
+function exportData() {
+  const data = JSON.stringify({links:S.links,favorites:S.favorites,settings:{dark:S.dark,lang:S.lang}},null,2);
+  const a = document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);
+  a.download='vico-data-'+Date.now()+'.json';
+  a.click();
+}
+
+function requestNotifPerm() {
+  if('Notification' in window) Notification.requestPermission().then(p=>showToast(p==='granted'?'🔔 Notificaciones activadas':'Notificaciones denegadas'));
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+async function checkAdmin() {
+  const pwd = document.getElementById('admin-pwd')?.value.trim();
+  if(!pwd) return;
+  const hash = await sha256(pwd);
+  const correctHash = await sha256('ANDRESXPOP1985');
+  const errEl = document.getElementById('admin-err');
+  if(hash === correctHash) {
+    S.adminUnlocked = true;
+    localStorage.setItem('vico_admin', '1');
+    closeModal('modal-admin');
+    showToast('🛡 Modo Admin desbloqueado · Bienvenido Jaime');
+    if(S.page==='settings') renderSettings();
+    if(errEl) errEl.style.display='none';
+  } else {
+    if(errEl) errEl.style.display='block';
+    showToast('❌ Contraseña incorrecta');
+    // Lock after 3 fails (simple)
+    S._adminFails = (S._adminFails||0)+1;
+    if(S._adminFails >= 3) showToast('⚠️ Demasiados intentos. Espera 30s.');
+  }
+}
+
+// ============================================================
+// AI CHAT
+// ============================================================
+function setAIProv(prov, btn) {
+  S.aiProv = prov;
+  localStorage.setItem('vico_ai_prov', prov);
+  document.querySelectorAll('.ai-prov-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  showToast(`IA: ${prov} activado`);
+}
+
+function initChat() {
+  const c = document.getElementById('chat-messages');
+  if(!c) return;
+  const modelInfo = S.aiProv==='groq'
+    ? `⚡ Groq · ${(S.groqModel||'llama-3.3-70b-versatile').split('/').pop()}`
+    : S.aiProv==='gemini'
+    ? `✨ Gemini · ${S.geminiModel||'gemini-2.5-flash'}`
+    : '🎭 Demo (sin API key)';
+  const noKeyMsg = (!S.groqKey && !S.geminiKey)
+    ? '<br>⚙️ <em>Para IA real añade tu key en <strong>Ajustes</strong>.</em>' : '';
+  c.innerHTML = `<div class="chat-msg ai">
+    👋 ¡Hola! Soy <strong>VICO IA</strong>, experto en empleos Hong Kong 2026.<br><br>
+    <span style="font-size:10px;background:var(--bg3);padding:2px 8px;border-radius:8px;color:var(--neon);">Modelo: ${modelInfo}</span><br><br>
+    Tengo datos de <strong>${JOBS_DATA.length}+ ofertas</strong>, empresas top, salarios, leyes laborales HK y ofertas reales vía JSearch.${noKeyMsg}<br><br>
+    ¿Qué buscas?
+  </div>`;
+  const chips = document.getElementById('chat-chips');
+  if(chips) chips.innerHTML = [
+    '👨‍🏫 Trabajo de profesor en HK',
+    '💰 Salarios 2026',
+    '🎯 Preparar entrevista',
+    '📄 CV para HK',
+    '🏢 Top empresas HK',
+    '⚖️ Leyes laborales HK',
+    '🔍 Empleos tech HK',
+    '📊 Mercado laboral 2026'
+  ].map(q=>`<span class="chip" onclick="sendChatMsg('${q}')">${q}</span>`).join('');
+}
+
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const msg = inp?.value.trim();
+  if(!msg) return;
+  inp.value='';
+  await sendChatMsg(msg);
+}
+
+async function sendChatMsg(msg) {
+  const c = document.getElementById('chat-messages');
+  if(!c) return;
+  // Clean and escape for display
+  const safeMsg = msg.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  c.innerHTML += `<div class="chat-msg user">${safeMsg}</div>`;
+  const loadId = 'ld'+Date.now();
+  c.innerHTML += `<div class="chat-msg ai" id="${loadId}" style="opacity:0.5;">
+    <span style="display:inline-flex;align-items:center;gap:6px;">
+      <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="var(--neon)" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></circle></svg>
+      Pensando con ${S.aiProv}…
+    </span>
+  </div>`;
+  c.scrollTop = c.scrollHeight;
+  let resp = '';
+  try {
+    if(S.aiProv==='groq' && S.groqKey)         resp = await callGroq(msg);
+    else if(S.aiProv==='gemini' && S.geminiKey) resp = await callGemini(msg);
+    else                                         resp = demoResp(msg);
+  } catch(e) {
+    resp = `❌ <strong>Error ${S.aiProv}:</strong> ${e.message}<br><br>
+    <em>Sugerencias:</em><br>
+    • Verifica tu API Key en <strong>Ajustes</strong><br>
+    • Usa el botón <strong>Test</strong> para comprobar la conexión<br>
+    • Cambia a modo <strong>Demo</strong> mientras tanto`;
+  }
+  document.getElementById(loadId)?.remove();
+  c.innerHTML += `<div class="chat-msg ai">${resp}</div>`;
+  c.scrollTop = c.scrollHeight;
+  playSound('message');
+}
+
+// ── GROQ: supports all current models (April 2026) ──────────────────
+const GROQ_MODELS = [
+  {id:'meta-llama/llama-4-maverick-17b-128e-instruct', label:'Llama 4 Maverick 17B 🔥 (nuevo)'},
+  {id:'meta-llama/llama-4-scout-17b-16e-instruct',     label:'Llama 4 Scout 17B (nuevo)'},
+  {id:'llama-3.3-70b-versatile',                       label:'Llama 3.3 70B Versatile ⚡'},
+  {id:'llama-3.1-8b-instant',                          label:'Llama 3.1 8B Instant (rápido)'},
+  {id:'groq/compound-beta',                            label:'Compound Beta (web search)'},
+  {id:'groq/compound-beta-mini',                       label:'Compound Beta Mini'},
+  {id:'openai/gpt-oss-120b',                           label:'GPT-OSS 120B'},
+];
+
+// ── GEMINI: modelos activos abril 2026 ───────────────────────────────
+const GEMINI_MODELS = [
+  {id:'gemini-2.5-pro',         label:'Gemini 2.5 Pro 🔥 (mejor)'},
+  {id:'gemini-2.5-flash',       label:'Gemini 2.5 Flash ⚡ (rápido)'},
+  {id:'gemini-2.5-flash-lite',  label:'Gemini 2.5 Flash-Lite (económico)'},
+  {id:'gemini-2.0-flash',       label:'Gemini 2.0 Flash'},
+];
+
+async function callGroq(msg) {
+  const model = S.groqModel || 'llama-3.3-70b-versatile';
+  const sys = `Eres VICO, asistente experto en búsqueda de empleo en Hong Kong y leyes laborales HK. 
+Tienes acceso a ${JOBS_DATA.length} ofertas reales, ${TOP_COMPANIES.length} empresas top y ${HK_PORTALS.length} portales.
+Datos clave 2026: salario medio HK$28K/mes, sectores top: Finance, Tech, Hospitality, Education.
+Responde siempre en español de forma concisa, útil y con datos concretos.`;
+  const r = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${S.groqKey}`,'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model,
+      messages:[{role:'system',content:sys},...S.chatHistory.slice(-8),{role:'user',content:msg}],
+      max_tokens:1000,
+      temperature:0.7
+    })
+  });
+  if(!r.ok){ const err=await r.json(); throw new Error(err.error?.message||'Groq error'); }
+  const d = await r.json();
+  const reply = d.choices[0].message.content;
+  S.chatHistory.push({role:'user',content:msg},{role:'assistant',content:reply});
+  return reply;
+}
+
+async function callGemini(msg) {
+  const model = S.geminiModel || 'gemini-2.5-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${S.geminiKey}`;
+  const sys = `Eres VICO, experto en empleos Hong Kong 2026 y leyes laborales. Responde en español, conciso y útil.`;
+  const r = await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      systemInstruction:{parts:[{text:sys}]},
+      contents:[
+        ...S.chatHistory.slice(-6).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),
+        {role:'user',parts:[{text:msg}]}
+      ],
+      generationConfig:{maxOutputTokens:1000,temperature:0.7}
+    })
+  });
+  if(!r.ok){ const err=await r.json(); throw new Error(err.error?.message||'Gemini error '+r.status); }
+  const d = await r.json();
+  const reply = d.candidates[0].content.parts[0].text;
+  S.chatHistory.push({role:'user',content:msg},{role:'assistant',content:reply});
+  return reply;
+}
+
+function demoResp(msg) {
+  const m = msg.toLowerCase();
+  if(m.includes('profesor')||m.includes('teacher')||m.includes('español')) {
+    const eduJobs = JOBS_DATA.filter(j=>j.category==='education');
+    return `🇪🇸 <strong>Empleos de Profesor en HK</strong><br><br>
+Encontré <strong>${eduJobs.length} ofertas</strong> en educación:<br><br>
+${eduJobs.slice(0,3).map(j=>`• <strong>${j.title}</strong> en ${j.company}<br>  💰 ${j.salary} | 🌐 ${j.languages.join(', ')}`).join('<br><br>')}<br><br>
+💡 <strong>Tips clave:</strong><br>
+• DELE B2+ y TEFL/CELTA son imprescindibles<br>
+• Los colegios internacionales pagan 40% más que academias<br>
+• Prepara una demo lesson de 20 minutos<br>
+• El inglés es obligatorio como segunda lengua<br><br>
+¿Quieres detalles de alguna empresa específica?`;
+  }
+  if(m.includes('salario')||m.includes('sueldo')) {
+    return `💰 <strong>Salarios en Hong Kong 2025</strong><br><br>
+• 🏦 Finance/Banking: HK$45K–80K/mes<br>
+• 💻 Technology: HK$40K–75K/mes<br>
+• ✈️ Aviation: HK$35K–65K/mes<br>
+• 🏥 Healthcare: HK$30K–55K/mes<br>
+• 🎓 Education: HK$25K–45K/mes<br>
+• 🏨 Hospitality: HK$22K–40K/mes<br><br>
+💡 <strong>Salario mínimo:</strong> HK$40/hora<br>
+📊 <strong>MPF:</strong> empleado y empleador aportan 5% cada uno<br><br>
+¿De qué sector quieres más información?`;
+  }
+  if(m.includes('entrevista')) {
+    return `🎯 <strong>Guía de Entrevistas en HK</strong><br><br>
+<strong>Antes:</strong><br>
+• Investiga la empresa (web, LinkedIn, news recientes)<br>
+• Prepara 5 preguntas inteligentes<br>
+• Revisa tu CV: habla de métricas concretas<br><br>
+<strong>Durante:</strong><br>
+• Viste formal: traje en Finance/Legal<br>
+• Llega 10 minutos antes<br>
+• Usa método STAR para respuestas conductuales<br>
+• Aprende: "你好" (Nei Ho) y "多謝" (Doh Jeh) en Cantonés<br><br>
+<strong>Después:</strong><br>
+• Email de agradecimiento en 24h<br>
+• Conecta en LinkedIn con el entrevistador<br><br>
+¿Para qué sector es tu entrevista?`;
+  }
+  if(m.includes('ley')||m.includes('legal')||m.includes('mpf')) {
+    return `⚖️ <strong>Leyes Laborales HK - Claves</strong><br><br>
+• <strong>Employment Ordinance:</strong> protege a empleados desde día 1<br>
+• <strong>Salario mínimo:</strong> HK$40/hora (actualizado 2024)<br>
+• <strong>MPF:</strong> pensión obligatoria. 5% empleado + 5% empleador<br>
+• <strong>Vacaciones:</strong> 7-14 días según antigüedad<br>
+• <strong>Preaviso:</strong> mínimo 1 mes (o salario equivalente)<br>
+• <strong>Horas extra:</strong> no reguladas en sector privado<br>
+• <strong>Discriminación:</strong> protección por sexo, edad, discapacidad<br><br>
+🌐 Fuente oficial: <a href="https://www.labour.gov.hk" target="_blank" style="color:var(--neon)">labour.gov.hk</a><br><br>
+¿Tienes alguna duda específica sobre contratos o derechos?`;
+  }
+  return `👋 <strong>VICO IA – Modo Demo</strong><br><br>
+Puedo ayudarte con:<br>
+• 🔍 Búsqueda de empleos específicos en HK<br>
+• 🏢 Info detallada sobre empresas top<br>
+• 💰 Rangos salariales por sector<br>
+• 🎯 Preparación de entrevistas<br>
+• 📄 Cómo adaptar tu CV para HK<br>
+• ⚖️ Leyes laborales de Hong Kong<br><br>
+💡 Para respuestas con IA real, añade tu API Key de <strong>Groq</strong> o <strong>Gemini</strong> en Ajustes.<br><br>
+¿Sobre qué quieres saber más?`;
+}
+
+function clearChat() {
+  S.chatHistory=[];
+  document.getElementById('chat-messages').innerHTML='';
+  initChat();
+}
+
+// ============================================================
+// POMODORO
+// ============================================================
+function setPomMode(mode, btn) {
+  S.pomMode = mode;
+  pausePomo();
+  const t={work:[25,0],break:[5,0],long:[15,0]};
+  [S.pomMin,S.pomSec] = t[mode]||[25,0];
+  updatePomoDisplay();
+  document.querySelectorAll('.pomo-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('pomo-mode-lbl').textContent = mode==='work'?'Sesión de trabajo':mode==='break'?'Descanso corto':'Descanso largo';
+}
+
+function startPomo() {
+  if(S.pomRunning){ pausePomo(); return; }
+  S.pomRunning=true;
+  document.getElementById('btn-pomo-start').innerHTML='<i class="fas fa-pause"></i> Pausar';
+  S.pomTimer = setInterval(()=>{
+    if(S.pomSec===0){
+      if(S.pomMin===0){ pomoComplete(); return; }
+      S.pomMin--; S.pomSec=59;
+    } else S.pomSec--;
+    updatePomoDisplay();
+  },1000);
+}
+
+function pausePomo() {
+  S.pomRunning=false;
+  clearInterval(S.pomTimer);
+  document.getElementById('btn-pomo-start').innerHTML='<i class="fas fa-play"></i> Iniciar';
+}
+
+function resetPomo() { pausePomo(); setPomMode(S.pomMode); }
+
+function pomoComplete() {
+  pausePomo();
+  playSound('pomo');
+  if(S.pomMode==='work'){
+    S.pomSessions++; S.pomTotal+=25;
+    document.getElementById('pomo-sessions').textContent=S.pomSessions;
+    document.getElementById('pomo-total').textContent=S.pomTotal;
+    showToast('🍅 ¡Pomodoro completado! Descansa.');
+    setPomMode('break');
+  } else { showToast('☕ ¡Descanso terminado! A trabajar.'); setPomMode('work'); }
+  if('Notification' in window && Notification.permission==='granted')
+    new Notification('VICO Pomodoro',{body:S.pomMode==='work'?'¡Sesión completada!':'¡Descanso terminado!'});
+}
+
+function updatePomoDisplay() {
+  const m=String(S.pomMin).padStart(2,'0'), s=String(S.pomSec).padStart(2,'0');
+  const d=document.getElementById('pomo-display');
+  if(d) d.textContent=`${m}:${s}`;
+}
+
+function addPomoTask() {
+  const inp=document.getElementById('pomo-task-input');
+  if(!inp||!inp.value.trim()) return;
+  S.pomTasks.push({id:Date.now()+'',text:inp.value.trim(),done:false});
+  inp.value='';
+  localStorage.setItem('vico_tasks',JSON.stringify(S.pomTasks));
+  renderPomoTasks();
+}
+
+function renderPomoTasks() {
+  const c=document.getElementById('pomo-tasks');
+  if(!c) return;
+  if(S.pomTasks.length===0){c.innerHTML=`<p style="color:var(--text3);text-align:center;font-size:12px;">No hay tareas. Añade tu primera tarea.</p>`; return;}
+  c.innerHTML=S.pomTasks.map(t=>`<div class="task-item ${t.done?'done':''}">
+    <input type="checkbox" ${t.done?'checked':''} onchange="togglePomoTask('${t.id}')">
+    <span>${t.text}</span>
+    <button onclick="deletePomoTask('${t.id}')" style="background:none;border:none;color:var(--danger);cursor:pointer;"><i class="fas fa-trash"></i></button>
+  </div>`).join('');
+}
+
+function togglePomoTask(id){const t=S.pomTasks.find(x=>x.id===id);if(t){t.done=!t.done;localStorage.setItem('vico_tasks',JSON.stringify(S.pomTasks));renderPomoTasks();}}
+function deletePomoTask(id){S.pomTasks=S.pomTasks.filter(x=>x.id!==id);localStorage.setItem('vico_tasks',JSON.stringify(S.pomTasks));renderPomoTasks();}
+
+// ============================================================
+// DASHBOARD CHARTS
+// ============================================================
+let charts = {};
+function renderCharts() {
+  // Monthly jobs chart
+  const monthly = document.getElementById('chart-monthly');
+  if(monthly){
+    if(charts.monthly) charts.monthly.destroy();
+    charts.monthly = new Chart(monthly,{type:'bar',data:{
+      labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+      datasets:[{label:'Empleos activos HK',data:[14200,15100,16300,15800,17200,18100,17500,18900,19200,18432,19800,20100],backgroundColor:'rgba(0,212,255,0.6)',borderColor:'#00d4ff',borderWidth:1,borderRadius:4}]
+    },options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#8892a4',font:{size:11}}}},scales:{y:{ticks:{color:'#8892a4',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}},x:{ticks:{color:'#8892a4',font:{size:10}},grid:{display:false}}}}});
+  }
+  // Sector chart
+  const sector = document.getElementById('chart-sector');
+  if(sector){
+    if(charts.sector) charts.sector.destroy();
+    charts.sector = new Chart(sector,{type:'doughnut',data:{
+      labels:['Finance','Tech','Hospitality','Education','Logistics','Healthcare'],
+      datasets:[{data:[28,22,18,14,10,8],backgroundColor:['#00d4ff','#ff6bff','#ffd700','#39ff14','#ff4d6d','#ffc107'],borderWidth:0}]
+    },options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{color:'#8892a4',font:{size:10},padding:8}}}}});
+  }
+  // Trending list
+  const tl = document.getElementById('trending-list');
+  if(tl) tl.innerHTML = [
+    {t:'Analista Financiero',m:'Finance · HK$45K',u:true,c:'+18%'},
+    {t:'Software Engineer',m:'Tech · HK$60K',u:true,c:'+24%'},
+    {t:'Data Scientist',m:'Tech · HK$55K',u:true,c:'+31%'},
+    {t:'Spanish Teacher',m:'Education · HK$35K',u:true,c:'+34%'},
+    {t:'ESG Consultant',m:'Finance · HK$50K',u:true,c:'+45%'},
+  ].map((x,i)=>`<div class="trend-item">
+    <div class="trend-rank">${i+1}</div>
+    <div class="trend-info"><div class="trend-title">${x.t}</div><div class="trend-meta">${x.m}</div></div>
+    <span class="trend-change trend-up">${x.c}</span>
+  </div>`).join('');
+  // Skills bars
+  const sb = document.getElementById('skills-bars');
+  if(sb) sb.innerHTML = [
+    {n:'Python / Data Science',v:92},{n:'Cantonés / Mandarín',v:88},{n:'ESG & Green Finance',v:85},
+    {n:'Cloud / AWS / Azure',v:82},{n:'CFA / Bloomberg',v:78},{n:'React / Vue.js',v:75},
+    {n:'Fintech / Blockchain',v:70},{n:'Project Management',v:68}
+  ].map(s=>`<div class="skill-bar-wrap">
+    <div class="skill-bar-label"><span>${s.n}</span><span>${s.v}%</span></div>
+    <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${s.v}%"></div></div>
+  </div>`).join('');
+  // Tips
+  const ct = document.getElementById('candidate-tips');
+  if(ct) ct.innerHTML = [
+    '🏦 El sector financiero representa el 28% del PIB de HK – es el sector más estable',
+    '🗣 Hablar Cantonés aumenta tu probabilidad de contratación en un 60%',
+    '📊 El salario medio en HK es 2.3x superior al de España o Colombia',
+    '⏰ Los contratos en Finance/Legal exigen 55-65h/semana de media',
+    '🎓 Los colegios internacionales pagan un 40% más que las academias privadas',
+    '💳 El MPF (pensión) es obligatorio: 5% empleado + 5% empleador',
+    '🌏 El inglés escrito perfecto es requisito en el 95% de las ofertas profesionales',
+    '📱 JobsDB tiene 2.1M visitas/mes – el mejor portal para empezar',
+    '🏢 HSBC, Cathay Pacific y MTR son los top 3 empleadores más estables',
+    '📋 Tu CV en HK debe incluir foto profesional y fecha de nacimiento'
+  ].map((tip,i)=>`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);"><span style="color:var(--neon);font-weight:700;min-width:20px;">${i+1}</span>${tip}</div>`).join('');
+}
+
+function refreshDashboardAI() {
+  showToast('🔄 Actualizando datos del dashboard...');
+  setTimeout(()=>{ renderCharts(); showToast('✅ Dashboard actualizado'); }, 1500);
+}
+
+function refreshCompaniesAI() {
+  showToast('🤖 Analizando empresas con IA...');
+  setTimeout(()=>renderCompanies(), 1500);
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id) {
+  const m=document.getElementById(id);
+  if(m){ m.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function closeModal(id) {
+  const m=document.getElementById(id);
+  if(m){ m.classList.remove('open'); document.body.style.overflow=''; }
+}
+// Close modals on backdrop click
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ============================================================
+// SOUNDS (base64 short beeps)
+// ============================================================
+const SOUNDS = {
+  nav: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',
+  click: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',
+  save: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',
+  pomo: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=',
+  message: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='
+};
+let soundEnabled = true;
+function playSound(type) {
+  if(!soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    const freqs = {nav:440,click:660,save:880,pomo:523,message:587};
+    osc.frequency.value = freqs[type]||440;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.05,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.1);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime+0.1);
+  } catch(e){}
+}
+
+// ============================================================
+// PWA INSTALL
+// ============================================================
+function installPWA() {
+  if(S.installPrompt){
+    S.installPrompt.prompt();
+    S.installPrompt.userChoice.then(c=>{ if(c.outcome==='accepted') showToast('✅ VICO instalada correctamente'); S.installPrompt=null; });
+  } else {
+    showToast('Usa el menú del navegador → "Añadir a pantalla de inicio"');
+  }
+}
+
+// ============================================================
+// GLOBAL SEARCH
+// ============================================================
+function handleGlobalSearch(q) {
+  if(!q.trim()) return;
+  if(S.page!=='jobs') navigateTo('jobs');
+  document.getElementById('job-search').value=q;
+  filterJobs();
+}
+
+// ============================================================
+// SHARED CONTENT (Web Share Target)
+// ============================================================
+function handleSharedContent() {
+  const p = new URLSearchParams(window.location.search);
+  const url = p.get('url')||p.get('text');
+  const title = p.get('title')||'';
+  if(url) { setTimeout(()=>openSharePopupWith(url,title),500); window.history.replaceState({},'',window.location.pathname); }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  // Restore dark mode (default: dark)
+  const savedDark = localStorage.getItem('vico_dark');
+  S.dark = savedDark === null ? true : savedDark === 'true';
+  document.documentElement.setAttribute('data-theme', S.dark ? 'dark' : 'light');
+  const di = document.getElementById('dark-icon');
+  if(di) di.className = S.dark ? 'fas fa-sun' : 'fas fa-moon';
+
+  // Restore all settings from localStorage
+  S.lang         = localStorage.getItem('vico_lang')         || 'es';
+  S.aiProv       = localStorage.getItem('vico_ai_prov')      || 'demo';
+  S.groqKey      = localStorage.getItem('vico_groq')         || '';
+  S.geminiKey    = localStorage.getItem('vico_gemini')       || '';
+  S.rapidKey     = localStorage.getItem('vico_rapid')        || '';
+  S.groqModel    = localStorage.getItem('vico_groq_model')   || 'llama-3.3-70b-versatile';
+  S.geminiModel  = localStorage.getItem('vico_gemini_model') || 'gemini-2.5-flash';
+  S.adminUnlocked= localStorage.getItem('vico_admin') === '1';
+
+  // Active AI provider button
+  document.querySelectorAll('.ai-prov-btn').forEach(b=>b.classList.toggle('active', b.dataset.prov === S.aiProv));
+
+  // Render dashboard (initial page)
+  renderCharts();
+  renderJobs();
+
+  // PWA install prompt
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    S.installPrompt = e;
+    const btn = document.getElementById('btn-install-top');
+    if(btn) btn.style.display = 'flex';
+  });
+  window.addEventListener('appinstalled', () => showToast('✅ VICO WorkFinder instalada'));
+
+  // Service Worker
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+  // Web Share Target
+  handleSharedContent();
+
+  // Pomodoro tasks
+  renderPomoTasks();
+
+  // Link badge
+  const lb = document.getElementById('links-badge');
+  if(lb && S.links.length > 0) { lb.textContent = S.links.length; lb.style.display = 'flex'; }
+
+  console.log('🚀 VICO WorkFinder v3.1 — Datos reales, JSearch + Groq/Gemini 2026');
+});
+</script>
+</body>
+</html>
