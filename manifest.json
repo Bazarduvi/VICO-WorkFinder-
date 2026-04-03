@@ -1,6 +1,6 @@
 {
   "name": "VICO WorkFinder",
-  "short_name": "VICO",
+  "short_name": "VICO WKF",
   "description": "Plataforma de búsqueda de empleo en Hong Kong - Creado por Jaime Andrés Dueñas Vicuña",
   "start_url": "./",
   "display": "standalone",
